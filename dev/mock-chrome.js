@@ -29,6 +29,8 @@
     ['Канбан-доска — Спринт 42', 'https://board.example.com/sprint-42', 7, 1, fav('Д', '#007b83')],
     ['Pull requests · octo/tab-search', 'https://github.com/octo/tab-search/pulls', 7, 1, fav('G', '#24292f')],
     ['Fix popup scrolling · Pull Request #41 · octo/tab-search', 'https://github.com/octo/tab-search/pull/41', 7, 1, fav('G', '#24292f')],
+    ['Jaeger UI', 'https://jaeger.example.com/trace/4f2a9c0b11d3', 7, 1, fav('J', '#60a5fa')],
+    ['Jaeger UI', 'https://jaeger.example.com/trace/9e1d77aa02c4', 7, 1, fav('J', '#60a5fa')],
     ['Входящие — Почта', 'https://mail.example.com/inbox', 7, 1, fav('П', '#1a73e8')],
   ];
 

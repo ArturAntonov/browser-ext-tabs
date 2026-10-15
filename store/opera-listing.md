@@ -69,6 +69,24 @@ Privacy: no network requests, nothing is sent anywhere. Tab data is used only in
 
 Note: the interface is currently in Russian.
 
+## Что нового (changelog для версий)
+
+### 1.1.0
+
+RU:
+- Вкладка, на которой открыт поиск, отмечена синей полосой и плашкой «текущая» — её видно, даже если выбрать другую строку.
+- У вкладок с одинаковыми заголовками под заголовком виден полный адрес страницы, длинный адрес сокращается в середине. Полный адрес показывается и когда запрос нашёлся только в адресе.
+- Заголовки вкладок крупнее, адрес — спокойнее: список легче читать.
+
+EN:
+- The tab you opened the search from is marked with a blue bar and a "текущая" (current) badge, visible even when another row is selected.
+- Tabs with identical titles show their full address, shortened in the middle if long. The full address is also shown when the query matched only in the URL.
+- Larger tab titles and a quieter address line make the list easier to scan.
+
+### 1.0.0
+
+Первая версия.
+
 ## Обоснование разрешений (если спросят на ревью)
 
 - `tabs` — заголовки и адреса вкладок для поиска, переключение на найденную вкладку, закрытие по «×».
