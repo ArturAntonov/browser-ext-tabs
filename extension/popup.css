@@ -145,10 +145,14 @@ body {
   min-width: 0;
 }
 
+/* Заголовок — главное: крупнее и плотнее. Адрес — справка: мельче и бледнее. */
 .title {
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
 }
 
 .title-text, .host {
@@ -159,8 +163,10 @@ body {
 }
 
 .host {
+  margin-top: 1px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11.5px;
+  opacity: 0.85;
 }
 
 mark {

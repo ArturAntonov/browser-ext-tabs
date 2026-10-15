@@ -1,4 +1,4 @@
-import { arrangeResults, matchRanges, hostnameOf, displayUrl } from './search.js';
+import { arrangeResults, matchRanges, hostnameOf, displayUrl, duplicateTitles, needsFullUrl } from './search.js';
 import { hasSpace, summarizeSpaces, spaceLabel, spaceColor } from './spaces.js';
 import {
   resolveContext, isCurrent, inGroup, loadAllTabs, jumpTo, getReturnTab, closeTab, diagnostics,
@@ -142,8 +142,11 @@ function tabRow(row, i) {
   const showBadge = row.kind === 'return' || !row.current || (windowScope && inGroup(tab));
   const badge = showBadge ? locationBadge(tab) : null;
   if (badge) sub.append(badge);
+  // Полный адрес — только где он помогает (одинаковые заголовки, совпадение лишь в адресе), иначе домен.
   // 64 символа помещаются в строку целиком — длинный адрес сокращаем сами, в середине, а не CSS-ом в конце.
-  sub.append(highlight(displayUrl(row.url, badge ? 48 : 64) || row.host, state.query));
+  const full = row.kind === 'tab' && needsFullUrl(row, state.query, state.dupTitles);
+  const address = full ? displayUrl(row.url, badge ? 48 : 64) : row.host || row.url;
+  sub.append(highlight(address, state.query));
   text.append(title, sub);
   li.append(favicon(tab), text);
   if (row.kind === 'return') {
@@ -206,6 +209,7 @@ function update() {
     rows.push({ kind: 'return', tab: t, title: `Вернуться: ${t.title || t.url}`, host: hostnameOf(t.url || ''), url: t.url || '' });
   }
   state.rows = rows.concat(results);
+  state.dupTitles = duplicateTitles(results);
   state.selected = 0;
   renderList();
 }

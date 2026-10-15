@@ -37,6 +37,28 @@ export function displayUrl(url, max = 80) {
   return host + rest.slice(0, head) + '…' + rest.slice(rest.length - (keep - head));
 }
 
+// Полный адрес под заголовком нужен не всегда — только там, где без него не обойтись:
+// — у вкладок с одинаковыми заголовками в текущем списке (их не различить иначе);
+// — когда часть запроса нашлась только в адресе (видно, почему вкладка в результатах).
+// Остальным хватает домена — так список спокойнее.
+const normTitle = (t) => t.trim().toLowerCase();
+
+export function duplicateTitles(rows) {
+  const counts = new Map();
+  for (const r of rows) {
+    const k = normTitle(r.title);
+    counts.set(k, (counts.get(k) || 0) + 1);
+  }
+  return new Set([...counts].filter(([, n]) => n > 1).map(([k]) => k));
+}
+
+export function needsFullUrl(row, query, dupTitles) {
+  if (dupTitles.has(normTitle(row.title))) return true;
+  const title = row.title.toLowerCase();
+  const host = row.host.toLowerCase();
+  return tokenize(query).some((t) => !title.includes(t) && !host.includes(t));
+}
+
 export function tokenize(query) {
   return query.toLowerCase().trim().split(/\s+/).filter(Boolean);
 }

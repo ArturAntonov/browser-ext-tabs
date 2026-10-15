@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { searchTabs, matchRanges, hostnameOf, tokenize, arrangeResults, displayUrl } from '../extension/search.js';
+import { searchTabs, matchRanges, hostnameOf, tokenize, arrangeResults, displayUrl, duplicateTitles, needsFullUrl } from '../extension/search.js';
 
 const tab = (id, title, url, extra = {}) => ({ id, index: id, title, url, ...extra });
 
@@ -131,4 +131,24 @@ test('displayUrl: длинный адрес сокращается в серед
 test('displayUrl: служебные адреса и мусор — как есть', () => {
   assert.equal(displayUrl('chrome://extensions/'), 'chrome://extensions/');
   assert.equal(displayUrl('не url'), 'не url');
+});
+
+test('needsFullUrl: адрес нужен у вкладок с одинаковыми заголовками', () => {
+  const rows = [
+    { title: 'Jaeger UI', host: 'jaeger.example.com' },
+    { title: 'jaeger ui ', host: 'jaeger.example.com' },
+    { title: 'Почта', host: 'mail.example.com' },
+  ];
+  const dups = duplicateTitles(rows);
+  assert.equal(needsFullUrl(rows[0], '', dups), true);
+  assert.equal(needsFullUrl(rows[1], '', dups), true);
+  assert.equal(needsFullUrl(rows[2], '', dups), false);
+});
+
+test('needsFullUrl: адрес нужен, когда часть запроса нашлась только в адресе', () => {
+  const row = { title: 'Jaeger UI', host: 'jaeger.example.com' };
+  const none = new Set();
+  assert.equal(needsFullUrl(row, 'jaeger', none), false);
+  assert.equal(needsFullUrl(row, 'example', none), false);
+  assert.equal(needsFullUrl(row, 'jaeger 4f2a', none), true);
 });
