@@ -9,7 +9,7 @@
 | Пакет | `tab-search.zip` — собирается `npm run zip` из папки `extension/` |
 | Категория | Productivity |
 | Иконка каталога | [store/icon-64.png](icon-64.png) (64×64), запасная [store/icon-128.png](icon-128.png) |
-| Скриншоты | [1-current-group.png](screenshots/1-current-group.png), [2-search-all-groups.png](screenshots/2-search-all-groups.png) + снимок из браузера (см. ниже) |
+| Скриншоты | [1-current-group.png](screenshots/1-current-group.png), [2-search-all-groups.png](screenshots/2-search-all-groups.png), [3-in-browser.png](screenshots/3-in-browser.png) — все 612×408 |
 | Лицензия | MIT — [LICENSE](../LICENSE) |
 | Политика конфиденциальности | https://github.com/ArturAntonov/browser-ext-tabs/blob/main/PRIVACY.md |
 | Страница поддержки | https://github.com/ArturAntonov/browser-ext-tabs (вопросы и ошибки — https://github.com/ArturAntonov/browser-ext-tabs/issues) |
@@ -73,6 +73,8 @@ Note: the interface is currently in Russian.
 - `storage` — помнить вкладку для «Вернуться» (сессионное хранилище).
 
 ## Третий скриншот: расширение в браузере
+
+Готов: [3-in-browser.png](screenshots/3-in-browser.png) — снят в Opera, обрезан до панели и окна расширения (без строки меню macOS и боковой панели), уменьшен `sips`. Как переснять:
 
 Opera просит хотя бы один снимок, где видно, где расширение находится в интерфейсе браузера. Его нужно снять вручную:
 
