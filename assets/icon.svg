@@ -1,16 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#3b82f6"/>
-      <stop offset="1" stop-color="#1d4ed8"/>
-    </linearGradient>
-  </defs>
+  <!-- «Петля-линза»: бесконечность вкладок, правая петля — линза лупы -->
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient></defs>
   <rect x="6" y="6" width="116" height="116" rx="28" fill="url(#bg)"/>
-  <!-- список вкладок -->
-  <rect x="26" y="30" width="62" height="11" rx="5.5" fill="#fff"/>
-  <rect x="26" y="50" width="46" height="11" rx="5.5" fill="#fff" opacity="0.85"/>
-  <rect x="26" y="70" width="30" height="11" rx="5.5" fill="#fff" opacity="0.7"/>
-  <!-- лупа -->
-  <circle cx="78" cy="78" r="19" fill="#1d4ed8" stroke="#fff" stroke-width="9"/>
-  <line x1="92" y1="92" x2="104" y2="104" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+  <g transform="translate(-4,-6)">
+    <path d="M64,64 C56,52 50,46 42,46 C32,46 26,54 26,64 C26,74 32,82 42,82 C50,82 56,76 64,64 C72,52 78,46 86,46 C96,46 102,54 102,64 C102,74 96,82 86,82 C78,82 72,76 64,64 Z" fill="none" stroke="#fff" stroke-width="10" stroke-linejoin="round"/>
+    <line x1="99" y1="77" x2="111" y2="89" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+  </g>
 </svg>

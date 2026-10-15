@@ -36,7 +36,7 @@
 
 ## Контакты
 
-Вопросы по конфиденциальности: <КОНТАКТНЫЙ_EMAIL>
+Вопросы по конфиденциальности: artur_septem@vk.com
 
 ---
 
@@ -56,4 +56,4 @@ The extension does not collect, store on any server, or share your data. Everyth
 
 **Permissions.** `tabs` — read tab titles and URLs, switch to a tab, close a tab with the "×" button. `tabGroups` — read tab group names and colors. `storage` — remember the tab for "Go back".
 
-**Contact:** <CONTACT_EMAIL>
+**Contact:** artur_septem@vk.com
