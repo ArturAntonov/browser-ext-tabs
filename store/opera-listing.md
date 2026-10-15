@@ -9,7 +9,7 @@
 | Пакет | `tab-search.zip` — собирается `npm run zip` из папки `extension/` |
 | Категория | Productivity |
 | Иконка каталога | [store/icon-64.png](icon-64.png) (64×64), запасная [store/icon-128.png](icon-128.png) |
-| Промо-картинка | [store/promo-300x188.png](promo-300x188.png) — вкладка Promotional Image. Если там указан другой размер: `npm run promo -- <ширина> <высота>` |
+| Промо-картинка | [store/promo-300x188.png](promo-300x188.png) — вкладка Promotional Image, размер 300×188 подтверждён в кабинете Opera. Перерисовать: `npm run promo` |
 | Скриншоты | [1-current-group.png](screenshots/1-current-group.png), [2-search-all-groups.png](screenshots/2-search-all-groups.png), [3-in-browser.png](screenshots/3-in-browser.png) — все 612×408 |
 | Лицензия | MIT — [LICENSE](../LICENSE) |
 | Политика конфиденциальности | https://github.com/ArturAntonov/browser-ext-tabs/blob/main/PRIVACY.md |
