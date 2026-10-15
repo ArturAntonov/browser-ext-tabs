@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Поиск по вкладкам",
+  "version": "0.3.0",
+  "description": "Быстрый поиск по открытым вкладкам: текущая группа, а при поиске — все группы и окна.",
+  "permissions": ["tabs", "tabGroups", "storage"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Поиск по вкладкам",
+    "default_popup": "popup.html"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      },
+      "description": "Открыть поиск по вкладкам"
+    },
+    "jump-back": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L",
+        "mac": "Command+Shift+L"
+      },
+      "description": "Вернуться к вкладке, с которой ушли через поиск"
+    }
+  }
+}

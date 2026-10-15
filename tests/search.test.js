@@ -1,0 +1,109 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { searchTabs, matchRanges, hostnameOf, tokenize, arrangeResults } from '../extension/search.js';
+
+const tab = (id, title, url, extra = {}) => ({ id, index: id, title, url, ...extra });
+
+const tabs = [
+  tab(1, 'Jira — RSI-123 Поиск по вкладкам', 'https://jira.example.com/browse/RSI-123'),
+  tab(2, 'Merge request !42', 'https://gitlab.example.com/group/repo/-/merge_requests/42'),
+  tab(3, 'Документация chrome.tabs', 'https://developer.chrome.com/docs/extensions/reference/api/tabs'),
+  tab(4, 'Почта', 'https://www.mail.example.ru/inbox'),
+];
+
+const ids = (results) => results.map((r) => r.tab.id);
+
+test('hostnameOf снимает www и не падает на мусоре', () => {
+  assert.equal(hostnameOf('https://www.mail.example.ru/inbox'), 'mail.example.ru');
+  assert.equal(hostnameOf('chrome://newtab/'), 'newtab');
+  assert.equal(hostnameOf('не url'), '');
+});
+
+test('tokenize приводит к нижнему регистру и режет по пробелам', () => {
+  assert.deepEqual(tokenize('  Jira   RSI '), ['jira', 'rsi']);
+  assert.deepEqual(tokenize('   '), []);
+});
+
+test('ищет по заголовку без учёта регистра, включая кириллицу', () => {
+  assert.deepEqual(ids(searchTabs(tabs, 'ПОЧТА')), [4]);
+});
+
+test('ищет по домену и по URL', () => {
+  assert.deepEqual(ids(searchTabs(tabs, 'gitlab')), [2]);
+  assert.deepEqual(ids(searchTabs(tabs, 'merge_requests')), [2]);
+});
+
+test('все токены должны совпасть', () => {
+  assert.deepEqual(ids(searchTabs(tabs, 'jira поиск')), [1]);
+  assert.deepEqual(ids(searchTabs(tabs, 'jira почта')), []);
+});
+
+test('совпадение в заголовке выше, чем только в URL', () => {
+  const t = [
+    tab(1, 'Что-то другое', 'https://example.com/tabs'),
+    tab(2, 'Tabs manager', 'https://example.com/x'),
+  ];
+  assert.deepEqual(ids(searchTabs(t, 'tabs')), [2, 1]);
+});
+
+test('начало слова выше, чем середина слова', () => {
+  const t = [tab(1, 'Prototabs', 'https://a.example'), tab(2, 'Proto tabs', 'https://b.example')];
+  assert.deepEqual(ids(searchTabs(t, 'tabs')), [2, 1]);
+});
+
+test('пустой запрос: справа налево по полосе вкладок, недавность не важна', () => {
+  const t = [
+    tab(3, 'c', 'https://c.example', { lastAccessed: 100 }),
+    tab(1, 'a', 'https://a.example', { lastAccessed: 300 }),
+    tab(2, 'b', 'https://b.example', { lastAccessed: 200 }),
+  ];
+  assert.deepEqual(ids(searchTabs(t, '')), [3, 2, 1]);
+});
+
+test('пустой запрос: сначала по окну, потом справа налево', () => {
+  const t = [
+    tab(1, 'a', 'https://a.example', { windowId: 2, index: 0 }),
+    tab(2, 'b', 'https://b.example', { windowId: 1, index: 5 }),
+    tab(3, 'c', 'https://c.example', { windowId: 1, index: 1 }),
+  ];
+  assert.deepEqual(ids(searchTabs(t, '')), [2, 3, 1]);
+});
+
+test('при равном весе совпадения — правые вкладки выше', () => {
+  const t = [tab(2, 'jira b', 'https://b.example'), tab(1, 'jira a', 'https://a.example')];
+  assert.deepEqual(ids(searchTabs(t, 'jira')), [2, 1]);
+});
+
+test('вкладка без заголовка ищется по URL и показывает URL как заголовок', () => {
+  const [r] = searchTabs([tab(1, '', 'https://loading.example/page')], 'loading');
+  assert.equal(r.title, 'https://loading.example/page');
+});
+
+test('pendingUrl используется, пока url ещё пуст', () => {
+  const t = [{ id: 1, index: 0, title: '', url: '', pendingUrl: 'https://pending.example/' }];
+  assert.deepEqual(ids(searchTabs(t, 'pending')), [1]);
+});
+
+test('matchRanges сливает пересекающиеся совпадения', () => {
+  assert.deepEqual(matchRanges('abcabc', 'abc bca'), [[0, 6]]);
+  assert.deepEqual(matchRanges('Jira Jira', 'jira'), [[0, 4], [5, 9]]);
+  assert.deepEqual(matchRanges('text', ''), []);
+});
+
+test('arrangeResults: без запроса — только текущая область', () => {
+  const t = [tab(1, 'a', 'https://a.example', { groupId: 7 }), tab(2, 'b', 'https://b.example', { groupId: 8 })];
+  const rows = arrangeResults(t, '', (x) => x.groupId === 7);
+  assert.deepEqual(ids(rows), [1]);
+  assert.equal(rows[0].current, true);
+});
+
+test('arrangeResults: с запросом — сначала текущая область, потом остальные', () => {
+  const t = [
+    tab(1, 'other jira', 'https://a.example', { groupId: 8 }),
+    tab(2, 'jira', 'https://b.example', { groupId: 8 }),
+    tab(3, 'про jira', 'https://c.example', { groupId: 7 }),
+  ];
+  const rows = arrangeResults(t, 'jira', (x) => x.groupId === 7);
+  assert.deepEqual(ids(rows), [3, 2, 1]);
+  assert.deepEqual(rows.map((r) => r.current), [true, false, false]);
+});
