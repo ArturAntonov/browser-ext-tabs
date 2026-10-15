@@ -1,6 +1,6 @@
 # Карточка для Opera Add-ons
 
-Поля формы на addons.opera.com/developer. Заполнить на двух языках: русский — основной, английский — для ревьюеров и остальных пользователей.
+Поля формы на addons.opera.com/developer. Название и категория задаются при загрузке пакета; описание, иконка и скриншоты — на вкладке **Versions** у конкретной версии; промо-картинка — на вкладке **Promotional Image**. Заполнить на двух языках: русский — основной, английский — для ревьюеров и остальных пользователей.
 
 ## Общее
 
@@ -9,6 +9,7 @@
 | Пакет | `tab-search.zip` — собирается `npm run zip` из папки `extension/` |
 | Категория | Productivity |
 | Иконка каталога | [store/icon-64.png](icon-64.png) (64×64), запасная [store/icon-128.png](icon-128.png) |
+| Промо-картинка | [store/promo-300x188.png](promo-300x188.png) — вкладка Promotional Image. Если там указан другой размер: `npm run promo -- <ширина> <высота>` |
 | Скриншоты | [1-current-group.png](screenshots/1-current-group.png), [2-search-all-groups.png](screenshots/2-search-all-groups.png), [3-in-browser.png](screenshots/3-in-browser.png) — все 612×408 |
 | Лицензия | MIT — [LICENSE](../LICENSE) |
 | Политика конфиденциальности | https://github.com/ArturAntonov/browser-ext-tabs/blob/main/PRIVACY.md |
