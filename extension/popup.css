@@ -7,6 +7,7 @@
   --selected: #e8f0fe;
   --accent: #1a73e8;
   --mark: #fff1a8;
+  --active-bg: #f3f7fe;
   color-scheme: light dark;
 }
 
@@ -20,6 +21,7 @@
     --selected: #394457;
     --accent: #8ab4f8;
     --mark: #6b5a00;
+    --active-bg: #26303f;
   }
 }
 
@@ -105,13 +107,24 @@ body {
 
 .item[aria-selected="true"] { background: var(--selected); }
 
-.item.current .title::after {
-  content: " · текущая";
-  color: var(--muted);
-  font-weight: normal;
+.item.active-tab {
+  box-shadow: inset 3px 0 0 var(--accent);
+  background: var(--active-bg);
 }
 
-.item.pinned .title::before {
+.item.active-tab[aria-selected="true"] { background: var(--selected); }
+
+.now-pill {
+  flex: none;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.item.pinned .title-text::before {
   content: "📌 ";
   font-size: 11px;
 }
@@ -132,7 +145,14 @@ body {
   min-width: 0;
 }
 
-.title, .host {
+.title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.title-text, .host {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

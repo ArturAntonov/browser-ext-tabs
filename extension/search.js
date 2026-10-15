@@ -10,6 +10,33 @@ export function hostnameOf(url) {
   }
 }
 
+// Адрес для подписи под заголовком: без схемы и www, с путём и параметрами.
+// Вкладки одного сайта обычно различаются концом адреса (id задачи, трейса, товара),
+// поэтому длинный адрес сокращается в середине пути, а домен и хвост остаются.
+export function displayUrl(url, max = 80) {
+  let u;
+  try {
+    u = new URL(url);
+  } catch {
+    return url;
+  }
+  if (u.protocol !== 'http:' && u.protocol !== 'https:') return url;
+  const host = u.hostname.replace(/^www\./, '') + (u.port ? `:${u.port}` : '');
+  let rest = u.pathname + u.search + u.hash;
+  try {
+    rest = decodeURI(rest); // кириллица и пробелы в пути — читаемо
+  } catch {
+    // битая кодировка — оставляем как есть
+  }
+  if (rest === '/') rest = '';
+  const full = host + rest;
+  if (full.length <= max) return full;
+  const keep = max - host.length - 1; // 1 — на «…»
+  if (keep < 12) return full.slice(0, max - 1) + '…';
+  const head = Math.ceil(keep * 0.35);
+  return host + rest.slice(0, head) + '…' + rest.slice(rest.length - (keep - head));
+}
+
 export function tokenize(query) {
   return query.toLowerCase().trim().split(/\s+/).filter(Boolean);
 }

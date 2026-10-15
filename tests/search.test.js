@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { searchTabs, matchRanges, hostnameOf, tokenize, arrangeResults } from '../extension/search.js';
+import { searchTabs, matchRanges, hostnameOf, tokenize, arrangeResults, displayUrl } from '../extension/search.js';
 
 const tab = (id, title, url, extra = {}) => ({ id, index: id, title, url, ...extra });
 
@@ -106,4 +106,29 @@ test('arrangeResults: с запросом — сначала текущая об
   const rows = arrangeResults(t, 'jira', (x) => x.groupId === 7);
   assert.deepEqual(ids(rows), [3, 2, 1]);
   assert.deepEqual(rows.map((r) => r.current), [true, false, false]);
+});
+
+test('displayUrl: без схемы и www, с путём и параметрами', () => {
+  assert.equal(displayUrl('https://www.example.com/'), 'example.com');
+  assert.equal(displayUrl('https://jaeger.example.com/trace/4f2a9c?uiFind=x'), 'jaeger.example.com/trace/4f2a9c?uiFind=x');
+  assert.equal(displayUrl('http://localhost:8765/dev/preview.html'), 'localhost:8765/dev/preview.html');
+});
+
+test('displayUrl: кириллица в пути раскодирована', () => {
+  assert.equal(displayUrl('https://ru.wikipedia.org/wiki/%D0%9A%D0%B0%D0%BB%D0%B8%D0%BD%D0%B8%D0%BD%D0%B3%D1%80%D0%B0%D0%B4'),
+    'ru.wikipedia.org/wiki/Калининград');
+});
+
+test('displayUrl: длинный адрес сокращается в середине, домен и хвост видны', () => {
+  const url = 'https://jaeger.example.com/search?service=dsp-enricher&limit=20&lookback=1h&operation=all&traceID=4f2a9c0b11d3';
+  const out = displayUrl(url, 60);
+  assert.equal(out.length, 60);
+  assert.ok(out.startsWith('jaeger.example.com/search?'));
+  assert.ok(out.endsWith('traceID=4f2a9c0b11d3'));
+  assert.ok(out.includes('…'));
+});
+
+test('displayUrl: служебные адреса и мусор — как есть', () => {
+  assert.equal(displayUrl('chrome://extensions/'), 'chrome://extensions/');
+  assert.equal(displayUrl('не url'), 'не url');
 });

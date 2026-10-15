@@ -42,6 +42,9 @@
     ['YouTube', 'https://www.youtube.com/', NONE],
     ['Новая вкладка', 'chrome://newtab/', ungrouped ? NONE : 7],
     ['Jira — RSI-200 Другое окно', 'https://jira.example.com/browse/RSI-200', NONE, 2],
+    // Одинаковые заголовки, различаются только адресом.
+    ['Jaeger UI', 'https://jaeger.example.com/trace/4f2a9c0b11d3', 7],
+    ['Jaeger UI', 'https://jaeger.example.com/search?service=dsp-enricher&limit=20&lookback=1h&operation=all&traceID=9e1d77aa02', 7],
   ];
   let tabs = store ? storeRaw.map(([title, url, groupId, windowId, favIconUrl, pinned = false], i, all) => ({
     id: i + 1, index: i, windowId, title, url, favIconUrl, pinned, groupId, active: i === all.length - 1,

@@ -29,6 +29,7 @@
 Как пользоваться:
 - нажмите кнопку расширения на панели или Ctrl+Shift+K (на macOS — Cmd+Shift+K);
 - без запроса видны вкладки текущей группы: недавно открытые сверху, закреплённые внизу;
+- под заголовком виден адрес страницы — вкладки с одинаковыми заголовками легко различить;
 - начните печатать — поиск идёт по заголовку, сайту и адресу, совпадения подсвечиваются;
 - сначала показываются совпадения в текущей группе, затем в других группах и окнах — с подписью, где лежит вкладка;
 - ↑/↓ — выбрать, Enter — перейти, «×» — закрыть вкладку.
@@ -55,6 +56,7 @@ With many tabs open, finding the right one by eye takes too long. Tab Search ope
 How to use:
 - click the toolbar button or press Ctrl+Shift+K (Cmd+Shift+K on macOS);
 - with an empty query you see the tabs of the current group: recent ones on top, pinned ones at the bottom;
+- each tab shows its page address, so tabs with identical titles are easy to tell apart;
 - start typing to search by title, site and URL, with matches highlighted;
 - matches in the current group come first, then other groups and windows, each labelled with where the tab is;
 - ↑/↓ to select, Enter to switch, "×" to close a tab.

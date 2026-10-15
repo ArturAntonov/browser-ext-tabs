@@ -1,4 +1,4 @@
-import { arrangeResults, matchRanges, hostnameOf } from './search.js';
+import { arrangeResults, matchRanges, hostnameOf, displayUrl } from './search.js';
 import { hasSpace, summarizeSpaces, spaceLabel, spaceColor } from './spaces.js';
 import {
   resolveContext, isCurrent, inGroup, loadAllTabs, jumpTo, getReturnTab, closeTab, diagnostics,
@@ -127,18 +127,23 @@ function tabRow(row, i) {
   li.setAttribute('role', 'option');
   li.setAttribute('aria-selected', i === state.selected);
   const { tab } = row;
-  if (tab.id === state.ctx.activeTabId) li.classList.add('current');
+  // Вкладка, на которой открыли поиск, — отдельный постоянный стиль, не зависящий от выбора мышью.
+  if (tab.id === state.ctx.activeTabId) li.classList.add('active-tab');
   if (tab.pinned) li.classList.add('pinned');
   const text = el('div', 'text');
   const title = el('div', 'title');
-  title.append(highlight(row.title, state.query));
+  const titleText = el('span', 'title-text');
+  titleText.append(highlight(row.title, state.query));
+  title.append(titleText);
+  if (tab.id === state.ctx.activeTabId && row.kind === 'tab') title.append(el('span', 'now-pill', 'текущая'));
   const sub = el('div', 'host');
   // В режиме «всё окно» (Chrome, активная вкладка вне группы) вкладки групп тоже подписываем.
   const windowScope = !state.ctx.group && state.ctx.spaceId == null;
   const showBadge = row.kind === 'return' || !row.current || (windowScope && inGroup(tab));
   const badge = showBadge ? locationBadge(tab) : null;
   if (badge) sub.append(badge);
-  sub.append(highlight(row.host || row.url, state.query));
+  // 64 символа помещаются в строку целиком — длинный адрес сокращаем сами, в середине, а не CSS-ом в конце.
+  sub.append(highlight(displayUrl(row.url, badge ? 48 : 64) || row.host, state.query));
   text.append(title, sub);
   li.append(favicon(tab), text);
   if (row.kind === 'return') {
