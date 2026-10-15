@@ -10,7 +10,7 @@
 | Категория | Productivity |
 | Иконка каталога | [store/icon-64.png](icon-64.png) (64×64), запасная [store/icon-128.png](icon-128.png) |
 | Скриншоты | [1-current-group.png](screenshots/1-current-group.png), [2-search-all-groups.png](screenshots/2-search-all-groups.png) + снимок из браузера (см. ниже) |
-| Лицензия | **решить**: MIT (рекомендую — код открыт и короткий) или вариант Opera по умолчанию CC BY-NC-ND 4.0 |
+| Лицензия | MIT — [LICENSE](../LICENSE) |
 | Политика конфиденциальности | https://github.com/ArturAntonov/browser-ext-tabs/blob/main/PRIVACY.md |
 | Страница поддержки | https://github.com/ArturAntonov/browser-ext-tabs (вопросы и ошибки — https://github.com/ArturAntonov/browser-ext-tabs/issues) |
 
