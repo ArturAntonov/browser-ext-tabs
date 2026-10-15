@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="116" height="116" rx="28" fill="url(#bg)"/>
+  <!-- список вкладок -->
+  <rect x="26" y="30" width="62" height="11" rx="5.5" fill="#fff"/>
+  <rect x="26" y="50" width="46" height="11" rx="5.5" fill="#fff" opacity="0.85"/>
+  <rect x="26" y="70" width="30" height="11" rx="5.5" fill="#fff" opacity="0.7"/>
+  <!-- лупа -->
+  <circle cx="78" cy="78" r="19" fill="#1d4ed8" stroke="#fff" stroke-width="9"/>
+  <line x1="92" y1="92" x2="104" y2="104" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+</svg>

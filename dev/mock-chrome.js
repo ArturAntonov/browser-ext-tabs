@@ -1,12 +1,36 @@
 // Подмена chrome.* для просмотра popup в обычной вкладке. ?nogroups — браузер без API групп,
-// ?ungrouped — активная вкладка вне группы, ?yandex — группы браузера не видны расширению.
+// ?ungrouped — активная вкладка вне группы, ?yandex — группы браузера не видны расширению,
+// ?store — правдоподобный набор вкладок для скриншотов в каталог.
 (() => {
   const params = new URLSearchParams(location.search);
   const noGroups = params.has('nogroups');
   const ungrouped = params.has('ungrouped');
   // ?yandex — как в Яндекс Браузере: tabGroups есть, но групп нет и у всех вкладок groupId = -1.
   const yandex = params.has('yandex');
+  const store = params.has('store');
   const NONE = -1;
+
+  // Значок сайта: буква на цветном квадрате, чтобы на скриншотах не было серых заглушек.
+  const fav = (letter, color) => 'data:image/svg+xml,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><rect width="16" height="16" rx="3" fill="${color}"/>` +
+    `<text x="8" y="12" font-family="Arial" font-size="11" font-weight="bold" fill="#fff" text-anchor="middle">${letter}</text></svg>`);
+
+  // [title, url, groupId, windowId, favIconUrl, pinned]
+  const storeRaw = [
+    ['Календарь', 'https://calendar.example.com/', NONE, 1, fav('К', '#d93025'), true],
+    ['Заметки', 'https://notes.example.com/', NONE, 1, fav('З', '#f9ab00'), true],
+    ['Калининград — Википедия', 'https://ru.wikipedia.org/wiki/Калининград', 8, 1, fav('W', '#5f6368')],
+    ['Куршская коса — Википедия', 'https://ru.wikipedia.org/wiki/Куршская_коса', 8, 1, fav('W', '#5f6368')],
+    ['Поезда Москва — Калининград: расписание', 'https://trains.example.ru/moscow-kaliningrad', 8, 1, fav('П', '#188038')],
+    ['Курс «Алгоритмы» — Лекция 3. Сортировки', 'https://learn.example.org/algorithms/3', 9, 1, fav('A', '#a142f4')],
+    ['GitHub - tc39/proposals: Tracking ECMAScript Proposals', 'https://github.com/tc39/proposals', 9, 1, fav('G', '#24292f')],
+    ['Array.prototype.sort() - JavaScript | MDN', 'https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Array/sort', 7, 1, fav('M', '#1b1b1b')],
+    ['chrome.tabs | Chrome for Developers', 'https://developer.chrome.com/docs/extensions/reference/api/tabs', 7, 1, fav('C', '#1a73e8')],
+    ['Канбан-доска — Спринт 42', 'https://board.example.com/sprint-42', 7, 1, fav('Д', '#007b83')],
+    ['Pull requests · octo/tab-search', 'https://github.com/octo/tab-search/pulls', 7, 1, fav('G', '#24292f')],
+    ['Fix popup scrolling · Pull Request #41 · octo/tab-search', 'https://github.com/octo/tab-search/pull/41', 7, 1, fav('G', '#24292f')],
+    ['Входящие — Почта', 'https://mail.example.com/inbox', 7, 1, fav('П', '#1a73e8')],
+  ];
 
   const raw = [
     ['Jira — RSI-123 Поиск по вкладкам', 'https://jira.example.com/browse/RSI-123', 7],
@@ -19,13 +43,17 @@
     ['Новая вкладка', 'chrome://newtab/', ungrouped ? NONE : 7],
     ['Jira — RSI-200 Другое окно', 'https://jira.example.com/browse/RSI-200', NONE, 2],
   ];
-  let tabs = raw.map(([title, url, groupId, windowId = 1], i) => ({
+  let tabs = store ? storeRaw.map(([title, url, groupId, windowId, favIconUrl, pinned = false], i, all) => ({
+    id: i + 1, index: i, windowId, title, url, favIconUrl, pinned, groupId, active: i === all.length - 1,
+  })) : raw.map(([title, url, groupId, windowId = 1], i) => ({
     id: i + 1, index: i, windowId, title, url, active: i === 7 || i === 8,
     groupId: noGroups ? undefined : yandex ? NONE : groupId, pinned: yandex && i < 2,
     // В Яндексе группа — нестандартное поле spaceId; группа 7 → 1001, 8 и без группы → 1002.
     ...(yandex ? { spaceId: windowId === 2 ? 2001 : groupId === 7 ? 1001 : 1002 } : {}), lastAccessed: 1000 + ((i * 37) % 11),
   }));
-  const groups = { 7: { id: 7, title: 'Работа', color: 'blue' }, 8: { id: 8, title: 'Мониторинг', color: 'green' } };
+  const groups = store
+    ? { 7: { id: 7, title: 'Работа', color: 'blue' }, 8: { id: 8, title: 'Путешествие', color: 'green' }, 9: { id: 9, title: 'Учёба', color: 'purple' } }
+    : { 7: { id: 7, title: 'Работа', color: 'blue' }, 8: { id: 8, title: 'Мониторинг', color: 'green' } };
   const log = (...a) => console.log('[mock chrome]', ...a);
 
   window.chrome = {

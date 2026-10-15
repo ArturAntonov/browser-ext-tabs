@@ -1,11 +1,13 @@
 {
   "name": "browser-ext-tabs",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",
     "preview": "python3 -m http.server 8765",
-    "zip": "cd extension && zip -r ../tab-search.zip . -x '.*'"
+    "zip": "rm -f tab-search.zip && cd extension && zip -r -X ../tab-search.zip . -x '.*'",
+    "icons": "scripts/render-icons.sh",
+    "screenshots": "scripts/render-screenshots.sh"
   }
 }

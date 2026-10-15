@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Скриншот для каталога</title>
+  <style>
+    /* 612×408 — рекомендуемый размер скриншота в Opera Add-ons, белый фон по их правилам. */
+    html, body { margin: 0; width: 612px; height: 408px; background: #fff; overflow: hidden; }
+    iframe {
+      position: absolute; left: 26px; top: 12px; width: 560px; height: 384px;
+      border: 1px solid #dadce0; border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.14);
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // ?q= — запрос в строке поиска, ?back= — id вкладки для строки «Вернуться».
+    const p = new URLSearchParams(location.search);
+    sessionStorage.clear();
+    if (p.get('back')) sessionStorage.setItem('returnTo', p.get('back'));
+    const frame = document.createElement('iframe');
+    frame.src = 'preview.html?store';
+    frame.addEventListener('load', () => setTimeout(() => {
+      const input = frame.contentDocument.querySelector('.query');
+      if (p.get('q')) {
+        input.value = p.get('q');
+        input.dispatchEvent(new Event('input'));
+      }
+    }, 300));
+    document.body.append(frame);
+  </script>
+</body>
+</html>

@@ -1,15 +1,29 @@
 {
   "manifest_version": 3,
   "name": "Поиск по вкладкам",
-  "version": "0.3.0",
-  "description": "Быстрый поиск по открытым вкладкам: текущая группа, а при поиске — все группы и окна.",
-  "permissions": ["tabs", "tabGroups", "storage"],
+  "version": "1.0.0",
+  "description": "Быстрый поиск по открытым вкладкам: сначала текущая группа, при поиске — все группы и окна.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": [
+    "tabs",
+    "tabGroups",
+    "storage"
+  ],
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
   "action": {
     "default_title": "Поиск по вкладкам",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    },
     "default_popup": "popup.html"
   },
   "commands": {

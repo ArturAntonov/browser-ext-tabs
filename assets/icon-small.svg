@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Упрощённая версия для 16 и 32 px: две полосы и крупная лупа -->
+  <rect x="1" y="1" width="30" height="30" rx="7" fill="#2563eb"/>
+  <rect x="6" y="7" width="16" height="3.5" rx="1.75" fill="#fff"/>
+  <rect x="6" y="13" width="9" height="3.5" rx="1.75" fill="#fff" opacity="0.8"/>
+  <circle cx="19" cy="19" r="5.2" fill="#2563eb" stroke="#fff" stroke-width="2.6"/>
+  <line x1="23" y1="23" x2="26" y2="26" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
+</svg>
