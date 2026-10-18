@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Поиск по вкладкам",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Быстрый поиск по открытым вкладкам: сначала текущая группа, при поиске — все группы и окна.",
   "icons": {
     "16": "icons/icon-16.png",
@@ -14,10 +14,6 @@
     "tabGroups",
     "storage"
   ],
-  "background": {
-    "service_worker": "background.js",
-    "type": "module"
-  },
   "action": {
     "default_title": "Поиск по вкладкам",
     "default_icon": {
@@ -33,13 +29,6 @@
         "mac": "Command+Shift+K"
       },
       "description": "Открыть поиск по вкладкам"
-    },
-    "jump-back": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+L",
-        "mac": "Command+Shift+L"
-      },
-      "description": "Вернуться к вкладке, с которой ушли через поиск"
     }
   }
 }
