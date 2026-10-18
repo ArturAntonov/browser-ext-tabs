@@ -1,27 +1,39 @@
 #!/bin/sh
-# Скриншоты 612×408 для Opera Add-ons из dev/store-shot.html через headless Chrome.
+# Скриншоты для каталогов из dev/store-shot*.html через headless Chrome.
 # Нужен запущенный сервер превью: npm run preview (порт 8765).
+#   scripts/render-screenshots.sh          — Opera Add-ons, 612×408 → store/screenshots/
+#   scripts/render-screenshots.sh chrome   — Chrome Web Store, 1280×800 → store/chrome/screenshots/
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
-BASE="${BASE:-http://localhost:8765/dev/store-shot.html}"
+HOST="${HOST:-http://localhost:8765/dev}"
 
-shot() { # query out
+shot() { # page query width height out
   tmp="$(mktemp -d)"
-  rm -f "$2"
+  rm -f "$5"
   "$CHROME" --headless --disable-gpu --hide-scrollbars --no-first-run --user-data-dir="$tmp/profile" \
-    --force-device-scale-factor=1 --window-size=612,408 --virtual-time-budget=4000 \
-    --screenshot="$2" "$BASE?$1" >/dev/null 2>&1 &
+    --force-device-scale-factor=1 --window-size="$3,$4" --virtual-time-budget=4000 \
+    --screenshot="$5" "$HOST/$1?$2" >/dev/null 2>&1 &
   pid=$!
   i=0
-  while [ ! -s "$2" ] && [ $i -lt 40 ]; do sleep 0.5; i=$((i + 1)); done
+  while [ ! -s "$5" ] && [ $i -lt 40 ]; do sleep 0.5; i=$((i + 1)); done
   sleep 0.5
   kill $pid 2>/dev/null || true
   wait $pid 2>/dev/null || true
-  rm -rf "$tmp"
-  [ -s "$2" ] || { echo "не удалось снять $2" >&2; exit 1; }
+  rm -rf "$tmp" 2>/dev/null || true
+  [ -s "$5" ] || { echo "не удалось снять $5" >&2; exit 1; }
 }
 
-shot "back=4" "$ROOT/store/screenshots/1-current-group.png"
-shot "q=github" "$ROOT/store/screenshots/2-search-all-groups.png"
-ls -l "$ROOT/store/screenshots"
+if [ "${1:-opera}" = "chrome" ]; then
+  mkdir -p "$ROOT/store/chrome/screenshots"
+  OUT="$ROOT/store/chrome/screenshots"
+  shot store-shot-chrome.html "shot=1" 1280 800 "$OUT/1-current-group.png"
+  shot store-shot-chrome.html "shot=2" 1280 800 "$OUT/2-search-all-groups.png"
+  shot store-shot-chrome.html "shot=3" 1280 800 "$OUT/3-same-titles.png"
+  ls -l "$OUT"
+else
+  OUT="$ROOT/store/screenshots"
+  shot store-shot.html "back=4" 612 408 "$OUT/1-current-group.png"
+  shot store-shot.html "q=github" 612 408 "$OUT/2-search-all-groups.png"
+  ls -l "$OUT"
+fi

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Скриншот для Chrome Web Store</title>
+  <style>
+    /* 1280×800 — рекомендуемый размер скриншота в Chrome Web Store. Без полей и скруглений: кадр во всю ширину. */
+    html, body { margin: 0; width: 1280px; height: 800px; overflow: hidden; }
+    body {
+      position: relative;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 55%, #c7d2fe 100%);
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif; color: #0f172a;
+    }
+    .caption { position: absolute; left: 80px; top: 0; bottom: 0; width: 400px; display: flex; flex-direction: column; justify-content: center; }
+    .caption h1 { margin: 0 0 22px; font-size: 44px; line-height: 1.12; font-weight: 700; }
+    .caption p { margin: 0; font-size: 22px; line-height: 1.4; color: #334155; }
+    iframe {
+      position: absolute; left: 520px; top: 30px; width: 560px; height: 580px;
+      transform: scale(1.28); transform-origin: 0 0;
+      border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; box-shadow: 0 10px 40px rgba(15, 23, 42, .22);
+    }
+  </style>
+</head>
+<body>
+  <div class="caption"><h1 id="t"></h1><p id="d"></p></div>
+  <script>
+    // ?shot=1|2|3 — какой кадр; подписи и запрос зависят от него.
+    const SHOTS = {
+      1: { title: 'Текущая группа — всегда под рукой',
+           text: 'Без запроса видны только вкладки текущей группы, новые сверху. Текущая вкладка отмечена, а строка «Вернуться» возвращает туда, откуда пришли.',
+           back: '4' },
+      2: { title: 'Поиск по всем группам и окнам',
+           text: 'Сначала совпадения в текущей группе, затем в остальных — с подписью, где лежит вкладка.',
+           q: 'github' },
+      3: { title: 'Одинаковые заголовки — разные адреса',
+           text: 'Полный адрес виден там, где он помогает отличить вкладки друг от друга.',
+           q: 'jaeger' },
+    };
+    const shot = SHOTS[new URLSearchParams(location.search).get('shot')] || SHOTS[1];
+    document.getElementById('t').textContent = shot.title;
+    document.getElementById('d').textContent = shot.text;
+    sessionStorage.clear();
+    if (shot.back) sessionStorage.setItem('returnTo', shot.back);
+    const frame = document.createElement('iframe');
+    frame.src = 'preview.html?store';
+    const SCALE = 1.28;
+    frame.addEventListener('load', () => setTimeout(() => {
+      const doc = frame.contentDocument;
+      const input = doc.querySelector('.query');
+      if (shot.q) {
+        input.value = shot.q;
+        input.dispatchEvent(new Event('input'));
+      }
+      // Как в браузере: окно расширения ужимается по содержимому. Центрируем его по вертикали.
+      setTimeout(() => {
+        const h = Math.min(doc.getElementById('app').scrollHeight, 580);
+        frame.style.height = h + 'px';
+        frame.style.top = Math.round((800 - h * SCALE) / 2) + 'px';
+      }, 150);
+    }, 300));
+    document.body.append(frame);
+  </script>
+</body>
+</html>

@@ -10,6 +10,7 @@
     "zip": "rm -f tab-search.zip && cd extension && zip -r -X ../tab-search.zip . -x '.*'",
     "icons": "scripts/render-icons.sh",
     "screenshots": "scripts/render-screenshots.sh",
-    "promo": "scripts/render-promo.sh"
+    "promo": "scripts/render-promo.sh",
+    "screenshots:chrome": "scripts/render-screenshots.sh chrome"
   }
 }

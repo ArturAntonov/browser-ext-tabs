@@ -72,11 +72,12 @@ npm run icons
 npm run screenshots
 ```
 
-Снимает скриншоты для каталога 612×408 в `store/screenshots/`. Перед этим запусти `npm run preview`.
+Снимает скриншоты для Opera 612×408 в `store/screenshots/`. Для Chrome Web Store, 1280×800 в `store/chrome/screenshots/`: `npm run screenshots:chrome`. Перед этим запусти `npm run preview`.
 
 ## Публикация
 
 - [store/opera-listing.md](store/opera-listing.md) — поля карточки для Opera Add-ons (RU/EN), разрешения, как снять скриншот в браузере.
+- [store/chrome-listing.md](store/chrome-listing.md) — то же для Chrome Web Store: материалы, обоснования разрешений, раскрытие данных.
 - [PRIVACY.md](PRIVACY.md) — политика конфиденциальности.
 
 ## Структура
