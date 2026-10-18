@@ -1,5 +1,6 @@
 import { arrangeResults, matchRanges, hostnameOf, displayUrl, duplicateTitles, needsFullUrl } from './search.js';
 import { hasSpace, summarizeSpaces, spaceLabel, spaceColor } from './spaces.js';
+import { hasConsent, giveConsent } from './consent.js';
 import {
   resolveContext, isCurrent, inGroup, loadAllTabs, jumpTo, getReturnTab, closeTab, diagnostics,
 } from './scope.js';
@@ -273,7 +274,35 @@ diagBtn.addEventListener('click', async () => {
   }
 });
 
-async function init() {
+const PRIVACY_URL = 'https://github.com/ArturAntonov/browser-ext-tabs/blob/main/PRIVACY.md';
+
+// Первый запуск: объясняем, что читается и куда это идёт, и ждём явного «Понятно».
+// Вкладки при этом не читаются: init() не доходит до resolveContext() и loadAllTabs().
+function showConsent() {
+  const box = el('div', 'consent');
+  const link = el('a', null, 'Политика конфиденциальности');
+  link.href = PRIVACY_URL;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  const ok = el('button', 'primary', 'Понятно');
+  ok.addEventListener('click', async () => {
+    await giveConsent(chrome.storage.local);
+    app.replaceChildren(header, list, footer);
+    start();
+  });
+  box.append(
+    el('h2', null, 'Поиск по вкладкам'),
+    el('p', null, 'Расширение читает заголовки и адреса ваших открытых вкладок, чтобы показать их списком и искать по ним.'),
+    el('p', null, 'Всё происходит только внутри браузера: данные нигде не сохраняются и никуда не отправляются.'),
+    el('p', 'consent-link', ''),
+    ok,
+  );
+  box.querySelector('.consent-link').append(link);
+  app.replaceChildren(box);
+  ok.focus();
+}
+
+async function start() {
   state.ctx = await resolveContext();
   [state.tabs, state.returnTab] = await Promise.all([loadAllTabs(), getReturnTab(state.ctx.activeTabId)]);
   state.ctx.spaces = summarizeSpaces(state.tabs.filter((t) => t.windowId === state.ctx.windowId));
@@ -281,6 +310,11 @@ async function init() {
   update();
   focusActiveTab();
   input.focus();
+}
+
+async function init() {
+  if (await hasConsent(chrome.storage?.local)) start();
+  else showConsent();
 }
 
 init();

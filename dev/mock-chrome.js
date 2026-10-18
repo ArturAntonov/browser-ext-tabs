@@ -1,6 +1,6 @@
 // Подмена chrome.* для просмотра popup в обычной вкладке. ?nogroups — браузер без API групп,
 // ?ungrouped — активная вкладка вне группы, ?yandex — группы браузера не видны расширению,
-// ?store — правдоподобный набор вкладок для скриншотов в каталог.
+// ?store — правдоподобный набор вкладок для скриншотов в каталог, ?firstrun — первый запуск (уведомление).
 (() => {
   const params = new URLSearchParams(location.search);
   const noGroups = params.has('nogroups');
@@ -64,6 +64,7 @@
   window.chrome = {
     tabs: {
       async query(q) {
+        window.__tabQueries = (window.__tabQueries || 0) + 1; // для проверки: до согласия вкладки не читаются
         return tabs.filter((t) =>
           (q.active === undefined || t.active === q.active) &&
           (!q.currentWindow || t.windowId === 1) &&
@@ -78,10 +79,21 @@
       async update(id, props) { log('windows.update', id, props); },
       async getAll() { return [{ id: 1, focused: true }, { id: 2, focused: false }]; },
     },
-    storage: { session: {
-      async get(k) { const v = sessionStorage.getItem(k); return v ? { [k]: JSON.parse(v) } : {}; },
-      async set(o) { for (const [k, v] of Object.entries(o)) sessionStorage.setItem(k, JSON.stringify(v)); },
-    } },
+    storage: {
+      // ?firstrun — как первый запуск: согласия ещё нет. Иначе считаем, что оно дано.
+      local: {
+        async get(k) {
+          const v = localStorage.getItem('mock:' + k);
+          if (v) return { [k]: JSON.parse(v) };
+          return params.has('firstrun') ? {} : { [k]: 1 };
+        },
+        async set(o) { for (const [k, v] of Object.entries(o)) localStorage.setItem('mock:' + k, JSON.stringify(v)); },
+      },
+      session: {
+        async get(k) { const v = sessionStorage.getItem(k); return v ? { [k]: JSON.parse(v) } : {}; },
+        async set(o) { for (const [k, v] of Object.entries(o)) sessionStorage.setItem(k, JSON.stringify(v)); },
+      },
+    },
   };
   if (!noGroups) {
     window.chrome.tabGroups = {
