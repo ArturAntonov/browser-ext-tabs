@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { searchTabs, matchRanges, hostnameOf, tokenize, arrangeResults, displayUrl, duplicateTitles, needsFullUrl } from '../extension/search.js';
+import { searchTabs, matchRanges, hostnameOf, tokenize, arrangeResults, displayUrl, duplicateTitles, needsFullUrl, SORT_ORDER, SORT_ACTIVITY } from '../extension/search.js';
 
 const tab = (id, title, url, extra = {}) => ({ id, index: id, title, url, ...extra });
 
@@ -151,4 +151,51 @@ test('needsFullUrl: адрес нужен, когда часть запроса 
   assert.equal(needsFullUrl(row, 'jaeger', none), false);
   assert.equal(needsFullUrl(row, 'example', none), false);
   assert.equal(needsFullUrl(row, 'jaeger 4f2a', none), true);
+});
+
+const withTime = (id, title, lastAccessed, extra = {}) => tab(id, title, `https://s${id}.example/`, { lastAccessed, ...extra });
+
+test('активность, пустой запрос: недавно просмотренные сверху, положение не важно', () => {
+  const t = [withTime(1, 'a', 100), withTime(2, 'b', 300), withTime(3, 'c', 200)];
+  assert.deepEqual(ids(searchTabs(t, '', SORT_ACTIVITY)), [2, 3, 1]);
+  assert.deepEqual(ids(searchTabs(t, '', SORT_ORDER)), [3, 2, 1]); // порядок — как раньше, справа налево
+});
+
+test('активность: при одинаковом времени (после восстановления сессии) решает положение справа налево', () => {
+  const t = [withTime(1, 'a', 500), withTime(2, 'b', 500), withTime(3, 'c', 500)];
+  assert.deepEqual(ids(searchTabs(t, '', SORT_ACTIVITY)), [3, 2, 1]);
+});
+
+test('активность: вкладка без lastAccessed уходит в конец, а не ломает сортировку', () => {
+  const t = [withTime(1, 'a', undefined), withTime(2, 'b', 300), withTime(3, 'c', 200)];
+  assert.deepEqual(ids(searchTabs(t, '', SORT_ACTIVITY)), [2, 3, 1]);
+});
+
+test('активность, поиск: среди одинаковых заголовков первой — та, что смотрели последней', () => {
+  const t = [
+    withTime(1, 'Jaeger UI', 100),
+    withTime(2, 'Jaeger UI', 900),
+    withTime(3, 'Jaeger UI', 500),
+  ];
+  assert.deepEqual(ids(searchTabs(t, 'jaeger', SORT_ACTIVITY)), [2, 3, 1]);
+});
+
+test('поиск без указания сортировки — по релевантности, как раньше', () => {
+  const t = [
+    tab(1, 'Что-то', 'https://example.com/jaeger', { lastAccessed: 900 }),
+    tab(2, 'Jaeger UI', 'https://x.example/', { lastAccessed: 100 }),
+  ];
+  assert.deepEqual(ids(searchTabs(t, 'jaeger')), [2, 1]);
+  assert.deepEqual(ids(searchTabs(t, 'jaeger', SORT_ACTIVITY)), [1, 2]);
+});
+
+test('arrangeResults с активностью: текущая область по-прежнему выше остальных', () => {
+  const t = [
+    withTime(1, 'jira', 900, { groupId: 8 }),
+    withTime(2, 'jira', 100, { groupId: 7 }),
+    withTime(3, 'jira', 500, { groupId: 7 }),
+  ];
+  const rows = arrangeResults(t, 'jira', (x) => x.groupId === 7, SORT_ACTIVITY);
+  assert.deepEqual(ids(rows), [3, 2, 1]);
+  assert.deepEqual(rows.map((r) => r.current), [true, true, false]);
 });

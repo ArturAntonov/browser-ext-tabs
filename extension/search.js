@@ -71,21 +71,31 @@ function scoreField(text, token, weight) {
   return weight * (WORD_BOUNDARY.test(text[i - 1]) ? 2 : 1);
 }
 
+export const SORT_ORDER = 'order';
+export const SORT_ACTIVITY = 'activity';
+
 // Порядок полосы вкладок справа налево: новые вкладки открываются справа, поэтому они сверху,
-// а закреплённые (всегда слева) — в конце. Время последнего открытия не годится:
-// после восстановления сессии у сотен вкладок оно почти одинаковое.
+// а закреплённые (всегда слева) — в конце.
 function byPosition(a, b) {
   return (a.tab.windowId ?? 0) - (b.tab.windowId ?? 0) || b.tab.index - a.tab.index;
 }
 
+// Активность: недавно просмотренные сверху. lastAccessed — когда вкладку в последний раз делали активной.
+// После восстановления сессии у нетронутых вкладок оно почти одинаковое, тогда решает положение в полосе.
+function byActivity(a, b) {
+  return (b.tab.lastAccessed ?? 0) - (a.tab.lastAccessed ?? 0) || byPosition(a, b);
+}
+
 // Каждый токен запроса должен найтись в заголовке, домене или URL (логическое И).
-export function searchTabs(tabs, query) {
+// sort = 'order' — по релевантности, при равной — по положению в полосе; 'activity' — только по недавности.
+export function searchTabs(tabs, query, sort = SORT_ORDER) {
   const tokens = tokenize(query);
+  const byTime = sort === SORT_ACTIVITY ? byActivity : byPosition;
   const items = tabs.map((tab) => {
     const url = tab.url || tab.pendingUrl || '';
     return { tab, title: tab.title || url, host: hostnameOf(url), url, score: 0 };
   });
-  if (tokens.length === 0) return items.sort(byPosition);
+  if (tokens.length === 0) return items.sort(byTime);
 
   const results = [];
   for (const item of items) {
@@ -103,17 +113,17 @@ export function searchTabs(tabs, query) {
     }
     if (total > 0) results.push({ ...item, score: total });
   }
-  return results.sort((a, b) => b.score - a.score || byPosition(a, b));
+  return sort === SORT_ACTIVITY ? results.sort(byActivity) : results.sort((a, b) => b.score - a.score || byPosition(a, b));
 }
 
 // Без запроса — только текущая область. С запросом — сначала совпадения в текущей области,
 // потом во всех остальных; у каждой записи флаг current.
-export function arrangeResults(tabs, query, isCurrent) {
+export function arrangeResults(tabs, query, isCurrent, sort = SORT_ORDER) {
   const mark = (item) => ({ ...item, current: isCurrent(item.tab) });
   if (tokenize(query).length === 0) {
-    return searchTabs(tabs.filter(isCurrent), '').map(mark);
+    return searchTabs(tabs.filter(isCurrent), '', sort).map(mark);
   }
-  const found = searchTabs(tabs, query).map(mark);
+  const found = searchTabs(tabs, query, sort).map(mark);
   return [...found.filter((r) => r.current), ...found.filter((r) => !r.current)];
 }
 

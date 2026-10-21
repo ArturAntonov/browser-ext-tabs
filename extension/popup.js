@@ -1,6 +1,9 @@
-import { arrangeResults, matchRanges, hostnameOf, displayUrl, duplicateTitles, needsFullUrl } from './search.js';
+import {
+  arrangeResults, matchRanges, hostnameOf, displayUrl, duplicateTitles, needsFullUrl, SORT_ORDER, SORT_ACTIVITY,
+} from './search.js';
 import { hasSpace, summarizeSpaces, spaceLabel, spaceColor } from './spaces.js';
 import { hasConsent, giveConsent } from './consent.js';
+import { getSort, setSort } from './prefs.js';
 import {
   resolveContext, isCurrent, inGroup, loadAllTabs, jumpTo, getReturnTab, closeTab, diagnostics,
 } from './scope.js';
@@ -17,6 +20,7 @@ const state = {
   rows: [], // { kind: 'return' | 'tab', tab, ... }
   selected: 0,
   query: '',
+  sort: SORT_ORDER,
 };
 
 const el = (tag, cls, text) => {
@@ -34,6 +38,22 @@ input.placeholder = 'Заголовок, сайт или адрес…';
 input.autocomplete = 'off';
 input.spellcheck = false;
 const scopeLine = el('div', 'scope');
+
+// Переключатель сортировки: одно значение на весь интерфейс, действует и на открытый список, и на результаты поиска.
+const sortBox = el('div', 'sort');
+sortBox.setAttribute('role', 'group');
+sortBox.setAttribute('aria-label', 'Сортировка');
+const SORT_OPTIONS = [
+  [SORT_ORDER, 'Порядок', 'Как вкладки стоят в браузере: справа налево, новые сверху'],
+  [SORT_ACTIVITY, 'Активность', 'Сначала те, что недавно просматривали'],
+];
+const sortButtons = SORT_OPTIONS.map(([mode, label, hint]) => {
+  const btn = el('button', 'seg', label);
+  btn.title = hint;
+  btn.addEventListener('click', () => setSortMode(mode));
+  sortBox.append(btn);
+  return [mode, btn];
+});
 header.append(input, scopeLine);
 const list = el('ul', 'list');
 list.setAttribute('role', 'listbox');
@@ -120,7 +140,11 @@ function renderScope() {
     if (ctx.groupsApi) reason = ctx.groupsById.size === 0 ? 'группы браузера расширению не видны' : 'вкладка вне группы';
     scopeLine.append(el('span', 'hint', reason));
   }
-  scopeLine.append(el('span', 'hint right', 'при поиске — все группы и окна'));
+  scopeLine.append(sortBox);
+}
+
+function renderSort() {
+  for (const [mode, btn] of sortButtons) btn.setAttribute('aria-pressed', String(state.sort === mode));
 }
 
 function tabRow(row, i) {
@@ -188,7 +212,8 @@ function renderList() {
   if (count === 0) {
     list.append(el('li', 'empty', searching ? 'Ничего не найдено' : 'Нет вкладок'));
   }
-  footerText.textContent = `${count} · ↑↓ выбрать · Enter перейти`;
+  // Подсказка, что поиск шире текущей группы, — пока строка поиска пуста (раньше жила справа в шапке).
+  footerText.textContent = `${count} · ↑↓ выбрать · Enter перейти${searching ? '' : ' · поиск — по всем группам и окнам'}`;
 }
 
 function select(i) {
@@ -202,7 +227,7 @@ function select(i) {
 
 function update() {
   const { ctx } = state;
-  const results = arrangeResults(state.tabs, state.query, (tab) => isCurrent(ctx, tab))
+  const results = arrangeResults(state.tabs, state.query, (tab) => isCurrent(ctx, tab), state.sort)
     .map((r) => ({ ...r, kind: 'tab' }));
   const rows = [];
   if (state.returnTab && state.query.trim() === '') {
@@ -226,6 +251,17 @@ function focusActiveTab() {
     select(i);
     node?.scrollIntoView({ block: 'center' });
   }
+}
+
+async function setSortMode(mode) {
+  if (state.sort !== mode) {
+    state.sort = mode;
+    renderSort();
+    update();
+    if (!state.query.trim()) focusActiveTab();
+    setSort(chrome.storage?.local, mode); // запоминаем в фоне, ждать не нужно
+  }
+  input.focus();
 }
 
 async function open(i) {
@@ -305,8 +341,10 @@ function showConsent() {
 async function start() {
   state.ctx = await resolveContext();
   [state.tabs, state.returnTab] = await Promise.all([loadAllTabs(), getReturnTab(state.ctx.activeTabId)]);
+  state.sort = await getSort(chrome.storage?.local);
   state.ctx.spaces = summarizeSpaces(state.tabs.filter((t) => t.windowId === state.ctx.windowId));
   renderScope();
+  renderSort();
   update();
   focusActiveTab();
   input.focus();

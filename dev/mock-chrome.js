@@ -85,7 +85,7 @@
         async get(k) {
           const v = localStorage.getItem('mock:' + k);
           if (v) return { [k]: JSON.parse(v) };
-          return params.has('firstrun') ? {} : { [k]: 1 };
+          return k === 'consent' && !params.has('firstrun') ? { [k]: 1 } : {};
         },
         async set(o) { for (const [k, v] of Object.entries(o)) localStorage.setItem('mock:' + k, JSON.stringify(v)); },
       },

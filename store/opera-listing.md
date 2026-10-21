@@ -32,6 +32,7 @@
 - у вкладок с одинаковыми заголовками виден полный адрес — их легко различить;
 - начните печатать — поиск идёт по заголовку, сайту и адресу, совпадения подсвечиваются;
 - сначала показываются совпадения в текущей группе, затем в других группах и окнах — с подписью, где лежит вкладка;
+- переключатель «Порядок / Активность» выбирает сортировку: как вкладки стоят в браузере или по времени последнего просмотра — так проще найти вкладку, с которой только что работали;
 - ↑/↓ — выбрать, Enter — перейти, «×» — закрыть вкладку.
 
 Вернуться назад: расширение помнит вкладку, с которой вы перешли. Строка «Вернуться» стоит первой в списке, а Ctrl+Shift+L (Cmd+Shift+L) переключает между двумя вкладками туда и обратно.
@@ -59,6 +60,7 @@ How to use:
 - tabs with identical titles show their full address, so they are easy to tell apart;
 - start typing to search by title, site and URL, with matches highlighted;
 - matches in the current group come first, then other groups and windows, each labelled with where the tab is;
+- the "Порядок / Активность" (Order / Activity) switch sorts tabs by their position in the browser or by when you last viewed them, so the tab you just worked with is easy to find;
 - ↑/↓ to select, Enter to switch, "×" to close a tab.
 
 Go back: the extension remembers the tab you came from. The "Go back" row is first in the list, and Ctrl+Shift+L (Cmd+Shift+L) toggles between the two tabs.
@@ -70,6 +72,18 @@ Privacy: no network requests, nothing is sent anywhere. Tab data is used only in
 Note: the interface is currently in Russian.
 
 ## Что нового (changelog для версий)
+
+### 1.3.0 (в Opera пока 1.1.0, эти изменения войдут в следующее обновление)
+
+RU:
+- Переключатель сортировки «Порядок / Активность» для списка и результатов поиска. «Активность» ставит выше вкладки, которые недавно просматривали, — удобно, когда много вкладок с одинаковым заголовком. Выбор запоминается.
+- При первом запуске показывается уведомление о том, какие данные читает расширение (все данные остаются в браузере). Пока оно не принято, вкладки не читаются.
+- Убрана отдельная горячая клавиша возврата: строка «Вернуться» в окне поиска делает то же самое.
+
+EN:
+- A sort switch "Order / Activity" for the list and search results. "Activity" puts recently viewed tabs first, which helps when many tabs share a title. The choice is remembered.
+- A notice on first launch explains what data the extension reads (everything stays in the browser). Tabs are not read until it is accepted.
+- The separate "go back" keyboard shortcut is removed: the "Go back" row in the popup does the same.
 
 ### 1.1.0
 
