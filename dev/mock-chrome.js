@@ -1,6 +1,6 @@
 // Подмена chrome.* для просмотра popup в обычной вкладке. ?nogroups — браузер без API групп,
 // ?ungrouped — активная вкладка вне группы, ?yandex — группы браузера не видны расширению,
-// ?store — правдоподобный набор вкладок для скриншотов в каталог, ?firstrun — первый запуск (уведомление).
+// ?store — правдоподобный набор вкладок для скриншотов в каталог, ?firstrun — первый запуск (уведомление), ?sort=activity — выбрана сортировка «Активность».
 (() => {
   const params = new URLSearchParams(location.search);
   const noGroups = params.has('nogroups');
@@ -34,6 +34,11 @@
     ['Входящие — Почта', 'https://mail.example.com/inbox', 7, 1, fav('П', '#1a73e8')],
   ];
 
+  // Сколько минут назад смотрели вкладку (по порядку storeRaw). Две «Jaeger UI»: левую только что открывали,
+  // правую — давно, поэтому «Порядок» и «Активность» ставят их по-разному.
+  const STORE_AGO_MIN = [9000, 8000, 4000, 3900, 3800, 3000, 2500, 180, 45, 20, 90, 5, 1, 300, 0];
+  const STORE_NOW = 1792800000000;
+
   const raw = [
     ['Jira — RSI-123 Поиск по вкладкам', 'https://jira.example.com/browse/RSI-123', 7],
     ['Merge request !42 · gitlab', 'https://gitlab.example.com/group/repo/-/merge_requests/42', 7],
@@ -50,6 +55,7 @@
   ];
   let tabs = store ? storeRaw.map(([title, url, groupId, windowId, favIconUrl, pinned = false], i, all) => ({
     id: i + 1, index: i, windowId, title, url, favIconUrl, pinned, groupId, active: i === all.length - 1,
+    lastAccessed: STORE_NOW - STORE_AGO_MIN[i] * 60000,
   })) : raw.map(([title, url, groupId, windowId = 1], i) => ({
     id: i + 1, index: i, windowId, title, url, active: i === 7 || i === 8,
     groupId: noGroups ? undefined : yandex ? NONE : groupId, pinned: yandex && i < 2,
@@ -85,6 +91,7 @@
         async get(k) {
           const v = localStorage.getItem('mock:' + k);
           if (v) return { [k]: JSON.parse(v) };
+          if (k === 'sort' && params.get('sort')) return { sort: params.get('sort') };
           return k === 'consent' && !params.has('firstrun') ? { [k]: 1 } : {};
         },
         async set(o) { for (const [k, v] of Object.entries(o)) localStorage.setItem('mock:' + k, JSON.stringify(v)); },

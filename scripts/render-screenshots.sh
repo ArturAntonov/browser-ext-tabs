@@ -27,9 +27,11 @@ shot() { # page query width height out
 if [ "${1:-opera}" = "chrome" ]; then
   mkdir -p "$ROOT/store/chrome/screenshots"
   OUT="$ROOT/store/chrome/screenshots"
-  shot store-shot-chrome.html "shot=1" 1280 800 "$OUT/1-current-group.png"
-  shot store-shot-chrome.html "shot=2" 1280 800 "$OUT/2-search-all-groups.png"
+  shot store-shot-chrome.html "shot=1" 1280 800 "$OUT/1-search.png"
+  shot store-shot-chrome.html "shot=2" 1280 800 "$OUT/2-recent-first.png"
   shot store-shot-chrome.html "shot=3" 1280 800 "$OUT/3-same-titles.png"
+  shot store-shot-chrome.html "shot=4" 1280 800 "$OUT/4-go-back.png"
+  shot store-shot-chrome.html "shot=5" 1280 800 "$OUT/5-private.png"
   ls -l "$OUT"
 else
   OUT="$ROOT/store/screenshots"
