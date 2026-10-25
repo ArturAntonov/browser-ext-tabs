@@ -1,0 +1,241 @@
+{
+  "extName": {
+    "message": "Infinite Tab Search",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Find any tab among hundreds. Search by title, site or address across all tab groups and windows.",
+    "description": "Short description (max 132 chars)"
+  },
+  "cmdOpen": {
+    "message": "Open tab search",
+    "description": "Keyboard shortcut description"
+  },
+  "searchPlaceholder": {
+    "message": "Title, site or address…",
+    "description": "Search field placeholder"
+  },
+  "sortLabel": {
+    "message": "Sort",
+    "description": "Accessibility label of the sort switch"
+  },
+  "sortOrder": {
+    "message": "Order",
+    "description": "Sort by tab position"
+  },
+  "sortOrderHint": {
+    "message": "As tabs are in the browser: right to left, newest first",
+    "description": "Tooltip"
+  },
+  "sortActivity": {
+    "message": "Activity",
+    "description": "Sort by last viewed time"
+  },
+  "sortActivityHint": {
+    "message": "Recently viewed first",
+    "description": "Tooltip"
+  },
+  "diagnostics": {
+    "message": "Diagnostics",
+    "description": "Link that copies a technical report"
+  },
+  "diagnosticsHint": {
+    "message": "Copy to clipboard what the browser exposes to the extension about tabs and groups",
+    "description": "Tooltip"
+  },
+  "diagCopied": {
+    "message": "Copied",
+    "description": "Diagnostics button after success"
+  },
+  "diagFailed": {
+    "message": "Could not copy",
+    "description": "Diagnostics button after failure"
+  },
+  "tabsCount_one": {
+    "message": "$COUNT$ tab",
+    "description": "Plural form: one",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "tabsCount_few": {
+    "message": "$COUNT$ tabs",
+    "description": "Plural form: few",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "tabsCount_many": {
+    "message": "$COUNT$ tabs",
+    "description": "Plural form: many",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "tabsCount_other": {
+    "message": "$COUNT$ tabs",
+    "description": "Plural form: other",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "groupUntitled": {
+    "message": "untitled",
+    "description": "Tab group without a title"
+  },
+  "chipCurrentGroup": {
+    "message": "Current group · $TABS$",
+    "description": "TABS is e.g. \"56 tabs\"",
+    "placeholders": {
+      "tabs": {
+        "content": "$1"
+      }
+    }
+  },
+  "chipGroup": {
+    "message": "Group “$NAME$”",
+    "description": "Chip with the group name",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "chipCurrentWindow": {
+    "message": "Current window",
+    "description": "Chip when there is no group"
+  },
+  "hintMoreGroups": {
+    "message": "more groups: $COUNT$",
+    "description": "Next to the chip",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "reasonNoApi": {
+    "message": "group API unavailable",
+    "description": "Why the window scope is used"
+  },
+  "reasonHidden": {
+    "message": "browser groups are not visible to the extension",
+    "description": "Why the window scope is used"
+  },
+  "reasonNoGroup": {
+    "message": "tab is not in a group",
+    "description": "Why the window scope is used"
+  },
+  "badgeSpace": {
+    "message": "group: $LABEL$",
+    "description": "Label of a tab in another Yandex group",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeSpaceHint": {
+    "message": "Yandex does not expose group names to extensions: showing the group’s main sites and tab count",
+    "description": "Tooltip"
+  },
+  "badgeGroup": {
+    "message": "group “$NAME$”",
+    "description": "Label of a tab in another group",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeOtherWindow": {
+    "message": "other window",
+    "description": "Label"
+  },
+  "badgeNoGroup": {
+    "message": "no group",
+    "description": "Label"
+  },
+  "spaceOther": {
+    "message": "another group",
+    "description": "Fallback label for a Yandex group"
+  },
+  "spaceNoSites": {
+    "message": "no sites",
+    "description": "Group without any recognised site"
+  },
+  "nowPill": {
+    "message": "current",
+    "description": "Badge on the tab the search was opened from"
+  },
+  "closeTab": {
+    "message": "Close tab",
+    "description": "Tooltip of the × button"
+  },
+  "sectionCurrentGroup": {
+    "message": "In the current group",
+    "description": "Results section"
+  },
+  "sectionCurrentWindow": {
+    "message": "In the current window",
+    "description": "Results section"
+  },
+  "sectionOthers": {
+    "message": "In other groups and windows",
+    "description": "Results section"
+  },
+  "emptyNotFound": {
+    "message": "Nothing found",
+    "description": "Empty search results"
+  },
+  "emptyNoTabs": {
+    "message": "No tabs",
+    "description": "Empty list"
+  },
+  "footerBase": {
+    "message": "$COUNT$ · ↑↓ select · Enter to open",
+    "description": "Footer with the number of rows",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "footerSearchAll": {
+    "message": " · search covers all groups and windows",
+    "description": "Appended to the footer while the query is empty"
+  },
+  "goBack": {
+    "message": "Go back: $TITLE$",
+    "description": "First row after leaving a tab via search",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "consentText1": {
+    "message": "The extension reads the titles and addresses of your open tabs to show them as a list and search them.",
+    "description": "First-run notice"
+  },
+  "consentText2": {
+    "message": "Everything happens inside your browser only: titles and addresses are not saved and are never sent anywhere.",
+    "description": "First-run notice"
+  },
+  "consentPrivacy": {
+    "message": "Privacy policy",
+    "description": "Link in the first-run notice"
+  },
+  "consentOk": {
+    "message": "Got it",
+    "description": "Button in the first-run notice"
+  }
+}

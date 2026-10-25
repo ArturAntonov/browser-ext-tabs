@@ -1,6 +1,8 @@
 # Политика конфиденциальности — «Поиск по вкладкам»
 
-Дата вступления в силу: 15 октября 2026 г. Обновлено: 21 октября 2026 г. (версия 1.3.0).
+Расширение «Поиск по вкладкам» (в английской версии — Infinite Tab Search).
+
+Дата вступления в силу: 15 октября 2026 г. Обновлено: 25 октября 2026 г. (версия 1.4.0: добавлен английский язык).
 
 ## Коротко
 
@@ -44,9 +46,11 @@
 
 ---
 
-# Privacy Policy — Tab Search
+# Privacy Policy — Infinite Tab Search
 
-Effective date: October 15, 2026. Updated: October 21, 2026 (version 1.3.0).
+The extension is called "Поиск по вкладкам" in Russian.
+
+Effective date: October 15, 2026. Updated: October 25, 2026 (version 1.4.0: English added).
 
 The extension does not collect, store on any server, or share your data. Everything happens inside your browser.
 

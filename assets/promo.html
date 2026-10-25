@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<!-- Промо-картинка для каталога. Размер — из ?w=&h= (по умолчанию 300×188), всё масштабируется от высоты. -->
+<!-- Промо-картинка для каталога. Размер — из ?w=&h= (по умолчанию 300×188), всё масштабируется от высоты. ?notext=1 — без текста. -->
 <style>
   html, body { margin: 0; overflow: hidden; }
   .promo {
@@ -14,6 +14,10 @@
     font-family: -apple-system, "Segoe UI", system-ui, sans-serif; color: #0f172a;
   }
   .promo img { width: calc(var(--h) * 0.42); height: calc(var(--h) * 0.42); flex: none; }
+  /* Без текста: плитка Chrome Web Store одна на все языки, слов на ней быть не должно. */
+  .promo.notext { justify-content: center; padding: 0; }
+  .promo.notext img { width: calc(var(--h) * 0.52); height: calc(var(--h) * 0.52); }
+  .promo.notext .txt { display: none; }
   .title { font-size: calc(var(--h) * 0.125); font-weight: 700; line-height: 1.1; }
   .tagline { margin-top: calc(var(--h) * 0.05); font-size: calc(var(--h) * 0.075); line-height: 1.3; color: #334155; }
 </style>
@@ -21,7 +25,7 @@
 <body>
   <div class="promo" id="promo">
     <img src="icon.svg" alt="">
-    <div>
+    <div class="txt">
       <div class="title">Поиск по вкладкам</div>
       <div class="tagline">Быстрый поиск среди бесконечных вкладок</div>
     </div>
@@ -33,6 +37,7 @@
     el.style.width = w + 'px';
     el.style.height = h + 'px';
     el.style.setProperty('--h', h + 'px');
+    if (p.get('notext')) el.classList.add('notext');
   </script>
 </body>
 </html>

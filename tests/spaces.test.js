@@ -23,8 +23,10 @@ test('summarizeSpaces: число вкладок и два самых часты
   ]);
   assert.deepEqual(s.get(10), { count: 4, hosts: ['orbit-games.com', 'bdocodex.com'] });
   assert.deepEqual(s.get(20), { count: 1, hosts: ['jira.example.com'] });
-  assert.equal(spaceLabel(s.get(10)), 'orbit-games.com, bdocodex.com · 4');
-  assert.equal(spaceLabel(undefined), 'другая группа');
+  const labels = { other: 'другая группа', noSites: 'без сайтов' };
+  assert.equal(spaceLabel(s.get(10), labels), 'orbit-games.com, bdocodex.com · 4');
+  assert.equal(spaceLabel(undefined, labels), 'другая группа');
+  assert.equal(spaceLabel({ count: 2, hosts: [] }, labels), 'без сайтов · 2');
 });
 
 test('isCurrent по spaceId: своя группа и закреплённые этого окна', () => {

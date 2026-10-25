@@ -26,9 +26,10 @@ export function summarizeSpaces(tabs) {
   return out;
 }
 
-export function spaceLabel(summary) {
-  if (!summary) return 'другая группа';
-  const hosts = summary.hosts.length ? summary.hosts.join(', ') : 'без сайтов';
+// labels — { other, noSites }: тексты для случаев, когда группа неизвестна или в ней нет сайтов.
+export function spaceLabel(summary, labels) {
+  if (!summary) return labels.other;
+  const hosts = summary.hosts.length ? summary.hosts.join(', ') : labels.noSites;
   return `${hosts} · ${summary.count}`;
 }
 

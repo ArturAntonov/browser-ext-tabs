@@ -4,6 +4,7 @@ import {
 import { hasSpace, summarizeSpaces, spaceLabel, spaceColor } from './spaces.js';
 import { hasConsent, giveConsent } from './consent.js';
 import { getSort, setSort } from './prefs.js';
+import { t, tabsCount, uiLang } from './i18n.js';
 import {
   resolveContext, isCurrent, inGroup, loadAllTabs, jumpTo, getReturnTab, closeTab, diagnostics,
 } from './scope.js';
@@ -30,11 +31,14 @@ const el = (tag, cls, text) => {
   return node;
 };
 
+document.documentElement.lang = uiLang();
+document.title = t('extName');
+
 const app = document.getElementById('app');
 const header = el('div', 'header');
 const input = el('input', 'query');
 input.type = 'search';
-input.placeholder = 'Заголовок, сайт или адрес…';
+input.placeholder = t('searchPlaceholder');
 input.autocomplete = 'off';
 input.spellcheck = false;
 const scopeLine = el('div', 'scope');
@@ -42,10 +46,10 @@ const scopeLine = el('div', 'scope');
 // Переключатель сортировки: одно значение на весь интерфейс, действует и на открытый список, и на результаты поиска.
 const sortBox = el('div', 'sort');
 sortBox.setAttribute('role', 'group');
-sortBox.setAttribute('aria-label', 'Сортировка');
+sortBox.setAttribute('aria-label', t('sortLabel'));
 const SORT_OPTIONS = [
-  [SORT_ORDER, 'Порядок', 'Как вкладки стоят в браузере: справа налево, новые сверху'],
-  [SORT_ACTIVITY, 'Активность', 'Сначала те, что недавно просматривали'],
+  [SORT_ORDER, t('sortOrder'), t('sortOrderHint')],
+  [SORT_ACTIVITY, t('sortActivity'), t('sortActivityHint')],
 ];
 const sortButtons = SORT_OPTIONS.map(([mode, label, hint]) => {
   const btn = el('button', 'seg', label);
@@ -59,8 +63,8 @@ const list = el('ul', 'list');
 list.setAttribute('role', 'listbox');
 const footer = el('div', 'footer');
 const footerText = el('span');
-const diagBtn = el('button', 'link', 'Диагностика');
-diagBtn.title = 'Скопировать в буфер, что браузер отдаёт расширению о вкладках и группах';
+const diagBtn = el('button', 'link', t('diagnostics'));
+diagBtn.title = t('diagnosticsHint');
 footer.append(footerText, diagBtn);
 app.append(header, list, footer);
 
@@ -88,29 +92,22 @@ function favicon(tab) {
   return el('span', 'icon icon-empty');
 }
 
-function tabsWord(n) {
-  const m10 = n % 10, m100 = n % 100;
-  if (m10 === 1 && m100 !== 11) return 'вкладка';
-  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'вкладки';
-  return 'вкладок';
-}
-
-const groupName = (g) => `«${g.title || 'без названия'}»`;
+const groupName = (g) => g.title || t('groupUntitled');
 
 // Подпись «где лежит вкладка» для вкладок вне текущей области.
 function locationBadge(tab) {
   const { ctx } = state;
   if (tab.windowId === ctx.windowId && hasSpace(tab) && tab.spaceId !== ctx.spaceId && !tab.pinned) {
-    const node = el('span', 'badge dot', `группа: ${spaceLabel(ctx.spaces.get(tab.spaceId))}`);
+    const node = el('span', 'badge dot', t('badgeSpace', spaceLabel(ctx.spaces.get(tab.spaceId), { other: t('spaceOther'), noSites: t('spaceNoSites') })));
     node.style.setProperty('--dot', spaceColor(tab.spaceId));
-    node.title = 'Яндекс не отдаёт расширениям названия групп — показаны главные сайты группы и число вкладок';
+    node.title = t('badgeSpaceHint');
     return node;
   }
   const group = inGroup(tab) ? ctx.groupsById.get(tab.groupId) : null;
   let text;
-  if (group) text = `группа ${groupName(group)}`;
-  else if (tab.windowId !== ctx.windowId) text = 'другое окно';
-  else if (ctx.groupsById.size > 0) text = 'вне группы';
+  if (group) text = t('badgeGroup', groupName(group));
+  else if (tab.windowId !== ctx.windowId) text = t('badgeOtherWindow');
+  else if (ctx.groupsById.size > 0) text = t('badgeNoGroup');
   else return null; // групп браузер не отдаёт — «вне группы» было бы неправдой
   const node = el('span', 'badge', text);
   if (group) {
@@ -125,19 +122,19 @@ function renderScope() {
   scopeLine.replaceChildren();
   if (ctx.spaceId != null) {
     const summary = ctx.spaces.get(ctx.spaceId);
-    const chip = el('span', 'chip dot', `Текущая группа · ${summary?.count ?? 0} ${tabsWord(summary?.count ?? 0)}`);
+    const chip = el('span', 'chip dot', t('chipCurrentGroup', tabsCount(summary?.count ?? 0)));
     chip.style.setProperty('--dot', spaceColor(ctx.spaceId));
     scopeLine.append(chip);
     const others = [...ctx.spaces.keys()].filter((id) => id !== ctx.spaceId).length;
-    if (others) scopeLine.append(el('span', 'hint', `ещё групп: ${others}`));
+    if (others) scopeLine.append(el('span', 'hint', t('hintMoreGroups', others)));
   } else if (ctx.group) {
-    const chip = el('span', 'chip dot', `Группа ${groupName(ctx.group)}`);
+    const chip = el('span', 'chip dot', t('chipGroup', groupName(ctx.group)));
     chip.style.setProperty('--dot', GROUP_COLORS[ctx.group.color] || GROUP_COLORS.grey);
     scopeLine.append(chip);
   } else {
-    scopeLine.append(el('span', 'chip', 'Текущее окно'));
-    let reason = 'API групп недоступно';
-    if (ctx.groupsApi) reason = ctx.groupsById.size === 0 ? 'группы браузера расширению не видны' : 'вкладка вне группы';
+    scopeLine.append(el('span', 'chip', t('chipCurrentWindow')));
+    let reason = t('reasonNoApi');
+    if (ctx.groupsApi) reason = ctx.groupsById.size === 0 ? t('reasonHidden') : t('reasonNoGroup');
     scopeLine.append(el('span', 'hint', reason));
   }
   scopeLine.append(sortBox);
@@ -160,7 +157,7 @@ function tabRow(row, i) {
   const titleText = el('span', 'title-text');
   titleText.append(highlight(row.title, state.query));
   title.append(titleText);
-  if (tab.id === state.ctx.activeTabId && row.kind === 'tab') title.append(el('span', 'now-pill', 'текущая'));
+  if (tab.id === state.ctx.activeTabId && row.kind === 'tab') title.append(el('span', 'now-pill', t('nowPill')));
   const sub = el('div', 'host');
   // В режиме «всё окно» (Chrome, активная вкладка вне группы) вкладки групп тоже подписываем.
   const windowScope = !state.ctx.group && state.ctx.spaceId == null;
@@ -179,7 +176,7 @@ function tabRow(row, i) {
     li.prepend(el('span', 'return-icon', '↩'));
   } else {
     const close = el('button', 'close', '×');
-    close.title = 'Закрыть вкладку';
+    close.title = t('closeTab');
     close.addEventListener('click', (e) => {
       e.stopPropagation();
       removeRow(i);
@@ -201,8 +198,8 @@ function renderList() {
     const section = row.kind === 'return' ? 'return' : row.current ? 'current' : 'other';
     if (searching && section !== lastSection) {
       const label = section === 'current'
-        ? (state.ctx.group || state.ctx.spaceId != null ? 'В текущей группе' : 'В текущем окне')
-        : 'В других группах и окнах';
+        ? (state.ctx.group || state.ctx.spaceId != null ? t('sectionCurrentGroup') : t('sectionCurrentWindow'))
+        : t('sectionOthers');
       list.append(el('li', 'section', label));
     }
     lastSection = section;
@@ -210,10 +207,10 @@ function renderList() {
   });
   const count = state.rows.filter((r) => r.kind === 'tab').length;
   if (count === 0) {
-    list.append(el('li', 'empty', searching ? 'Ничего не найдено' : 'Нет вкладок'));
+    list.append(el('li', 'empty', searching ? t('emptyNotFound') : t('emptyNoTabs')));
   }
   // Подсказка, что поиск шире текущей группы, — пока строка поиска пуста (раньше жила справа в шапке).
-  footerText.textContent = `${count} · ↑↓ выбрать · Enter перейти${searching ? '' : ' · поиск — по всем группам и окнам'}`;
+  footerText.textContent = t('footerBase', count) + (searching ? '' : t('footerSearchAll'));
 }
 
 function select(i) {
@@ -231,8 +228,8 @@ function update() {
     .map((r) => ({ ...r, kind: 'tab' }));
   const rows = [];
   if (state.returnTab && state.query.trim() === '') {
-    const t = state.returnTab;
-    rows.push({ kind: 'return', tab: t, title: `Вернуться: ${t.title || t.url}`, host: hostnameOf(t.url || ''), url: t.url || '' });
+    const back = state.returnTab;
+    rows.push({ kind: 'return', tab: back, title: t('goBack', back.title || back.url), host: hostnameOf(back.url || ''), url: back.url || '' });
   }
   state.rows = rows.concat(results);
   state.dupTitles = duplicateTitles(results);
@@ -303,9 +300,9 @@ diagBtn.addEventListener('click', async () => {
   const json = JSON.stringify(await diagnostics(), null, 1);
   try {
     await navigator.clipboard.writeText(json);
-    diagBtn.textContent = 'Скопировано';
+    diagBtn.textContent = t('diagCopied');
   } catch {
-    diagBtn.textContent = 'Не удалось скопировать';
+    diagBtn.textContent = t('diagFailed');
     console.log(json);
   }
 });
@@ -316,20 +313,20 @@ const PRIVACY_URL = 'https://github.com/ArturAntonov/browser-ext-tabs/blob/main/
 // Вкладки при этом не читаются: init() не доходит до resolveContext() и loadAllTabs().
 function showConsent() {
   const box = el('div', 'consent');
-  const link = el('a', null, 'Политика конфиденциальности');
+  const link = el('a', null, t('consentPrivacy'));
   link.href = PRIVACY_URL;
   link.target = '_blank';
   link.rel = 'noopener';
-  const ok = el('button', 'primary', 'Понятно');
+  const ok = el('button', 'primary', t('consentOk'));
   ok.addEventListener('click', async () => {
     await giveConsent(chrome.storage.local);
     app.replaceChildren(header, list, footer);
     start();
   });
   box.append(
-    el('h2', null, 'Поиск по вкладкам'),
-    el('p', null, 'Расширение читает заголовки и адреса ваших открытых вкладок, чтобы показать их списком и искать по ним.'),
-    el('p', null, 'Всё происходит только внутри браузера: заголовки и адреса не сохраняются и никуда не отправляются.'),
+    el('h2', null, t('extName')),
+    el('p', null, t('consentText1')),
+    el('p', null, t('consentText2')),
     el('p', 'consent-link', ''),
     ok,
   );

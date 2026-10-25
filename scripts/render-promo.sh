@@ -1,16 +1,17 @@
 #!/bin/sh
 # Промо-картинка для каталога из assets/promo.html через headless Chrome.
-# Использование: scripts/render-promo.sh [ширина] [высота]  (по умолчанию 300 188)
+# Использование: scripts/render-promo.sh [ширина] [высота] [notext]  (по умолчанию 300 188; notext — плитка без текста)
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 W="${1:-300}"; H="${2:-188}"
-OUT="$ROOT/store/promo-${W}x${H}.png"
+if [ "${3:-}" = "notext" ]; then SUFFIX="-notext"; QUERY="&notext=1"; else SUFFIX=""; QUERY=""; fi
+OUT="$ROOT/store/promo-${W}x${H}${SUFFIX}.png"
 tmp="$(mktemp -d)"
 rm -f "$OUT"
 "$CHROME" --headless --disable-gpu --hide-scrollbars --no-first-run --user-data-dir="$tmp/profile" \
   --allow-file-access-from-files --force-device-scale-factor=1 --window-size="$W,$H" \
-  --virtual-time-budget=2000 --screenshot="$OUT" "file://$ROOT/assets/promo.html?w=$W&h=$H" >/dev/null 2>&1 &
+  --virtual-time-budget=2000 --screenshot="$OUT" "file://$ROOT/assets/promo.html?w=$W&h=$H$QUERY" >/dev/null 2>&1 &
 pid=$!
 i=0
 while [ ! -s "$OUT" ] && [ $i -lt 30 ]; do sleep 0.5; i=$((i + 1)); done

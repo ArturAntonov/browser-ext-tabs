@@ -25,32 +25,35 @@
 <body>
   <div class="caption"><img src="../assets/icon.svg" alt=""><h1 id="t"></h1><p id="d"></p></div>
   <script>
-    // ?shot=1…5 — какой кадр. Подписи пишем про выгоду, а не про устройство выдачи: это витрина магазина.
+    // ?shot=1…5 — какой кадр, ?lang=ru|en — язык подписей и интерфейса. Подписи пишем про выгоду, а не про устройство выдачи: это витрина магазина.
     // frame — параметры для preview.html (мок браузера), q — запрос в строке поиска, back — id вкладки для «Вернуться».
     const SHOTS = {
-      1: { title: 'Любая вкладка — за секунду',
-           text: 'Печатайте название, сайт или адрес. Ищем сразу во всех группах и окнах.',
+      1: { ru: { title: 'Любая вкладка — за секунду', text: 'Печатайте название, сайт или адрес. Ищем сразу во всех группах и окнах.' },
+           en: { title: 'Any tab in a second', text: 'Type a title, site or address. We search all groups and windows at once.' },
            q: 'github' },
-      2: { title: 'Свежие вкладки — первыми',
-           text: 'Только что работали с вкладкой? Режим «Активность» поднимет её наверх.',
+      2: { ru: { title: 'Свежие вкладки — первыми', text: 'Только что работали с вкладкой? Режим «Активность» поднимет её наверх.' },
+           en: { title: 'Recent tabs come first', text: 'Just worked on a tab? Switch to Activity and it jumps to the top.' },
            frame: '&sort=activity' },
-      3: { title: 'Похожие вкладки не спутаются',
-           text: 'У похожих вкладок виден адрес, а нужная окажется в начале списка.',
+      3: { ru: { title: 'Похожие вкладки не спутаются', text: 'У похожих вкладок виден адрес, а нужная окажется в начале списка.' },
+           en: { title: 'Look-alike tabs, no mix-ups', text: 'Similar tabs show their address, and the one you need comes first.' },
            frame: '&sort=activity', q: 'jaeger' },
-      4: { title: 'Назад — одним нажатием',
-           text: 'Расширение помнит, откуда вы пришли. Откройте окно и нажмите Enter — вы снова на месте.',
+      4: { ru: { title: 'Назад — одним нажатием', text: 'Расширение помнит, откуда вы пришли. Откройте окно и нажмите Enter — вы снова на месте.' },
+           en: { title: 'Back in one keystroke', text: 'The extension remembers where you came from. Open it, press Enter — and you are back.' },
            back: '4' },
-      5: { title: 'Ваши вкладки — только ваши',
-           text: 'Расширение работает только в вашем браузере: данные о вкладках никуда не отправляются.',
+      5: { ru: { title: 'Ваши вкладки — только ваши', text: 'Расширение работает только в вашем браузере: данные о вкладках никуда не отправляются.' },
+           en: { title: 'Your tabs stay yours', text: 'Works only inside your browser: tab data is never sent anywhere.' },
            frame: '&firstrun' },
     };
+    // ?lang=en — английские подписи и английский интерфейс; по умолчанию русский.
+    const lang = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'ru';
     const shot = SHOTS[new URLSearchParams(location.search).get('shot')] || SHOTS[1];
-    document.getElementById('t').textContent = shot.title;
-    document.getElementById('d').textContent = shot.text;
+    document.documentElement.lang = lang;
+    document.getElementById('t').textContent = shot[lang].title;
+    document.getElementById('d').textContent = shot[lang].text;
     sessionStorage.clear();
     if (shot.back) sessionStorage.setItem('returnTo', shot.back);
     const frame = document.createElement('iframe');
-    frame.src = 'preview.html?store' + (shot.frame || '');
+    frame.src = 'preview.html?store&lang=' + lang + (shot.frame || '');
     const SCALE = 1.28;
     frame.addEventListener('load', () => setTimeout(() => {
       const doc = frame.contentDocument;

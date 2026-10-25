@@ -1,6 +1,6 @@
 {
   "name": "browser-ext-tabs",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -11,6 +11,7 @@
     "icons": "scripts/render-icons.sh",
     "screenshots": "scripts/render-screenshots.sh",
     "promo": "scripts/render-promo.sh",
-    "screenshots:chrome": "scripts/render-screenshots.sh chrome"
+    "screenshots:chrome": "scripts/render-screenshots.sh chrome",
+    "check:chrome": "node scripts/check-in-chrome.mjs extension"
   }
 }

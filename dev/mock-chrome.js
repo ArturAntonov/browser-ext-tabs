@@ -1,6 +1,6 @@
 // Подмена chrome.* для просмотра popup в обычной вкладке. ?nogroups — браузер без API групп,
 // ?ungrouped — активная вкладка вне группы, ?yandex — группы браузера не видны расширению,
-// ?store — правдоподобный набор вкладок для скриншотов в каталог, ?firstrun — первый запуск (уведомление), ?sort=activity — выбрана сортировка «Активность».
+// ?store — правдоподобный набор вкладок для скриншотов в каталог, ?firstrun — первый запуск (уведомление), ?sort=activity — выбрана сортировка «Активность», ?lang=en — английский интерфейс.
 (() => {
   const params = new URLSearchParams(location.search);
   const noGroups = params.has('nogroups');
@@ -8,6 +8,7 @@
   // ?yandex — как в Яндекс Браузере: tabGroups есть, но групп нет и у всех вкладок groupId = -1.
   const yandex = params.has('yandex');
   const store = params.has('store');
+  const lang = params.get('lang') || 'ru';
   const NONE = -1;
 
   // Значок сайта: буква на цветном квадрате, чтобы на скриншотах не было серых заглушек.
@@ -34,6 +35,18 @@
     ['Входящие — Почта', 'https://mail.example.com/inbox', 7, 1, fav('П', '#1a73e8')],
   ];
 
+  // Для английской карточки те же вкладки, но с английскими заголовками (индекс в storeRaw → строка вместо русской).
+  const STORE_EN_OVERRIDES = {
+    0: ['Calendar', 'https://calendar.example.com/', NONE, 1, fav('C', '#d93025'), true],
+    1: ['Notes', 'https://notes.example.com/', NONE, 1, fav('N', '#f9ab00'), true],
+    2: ['Lisbon – Wikipedia', 'https://en.wikipedia.org/wiki/Lisbon', 8, 1, fav('W', '#5f6368')],
+    3: ['Sintra – Wikipedia', 'https://en.wikipedia.org/wiki/Sintra', 8, 1, fav('W', '#5f6368')],
+    4: ['Flights to Lisbon: timetable', 'https://flights.example.com/lisbon', 8, 1, fav('F', '#188038')],
+    5: ['Algorithms course — Lecture 3. Sorting', 'https://learn.example.org/algorithms/3', 9, 1, fav('A', '#a142f4')],
+    7: ['Array.prototype.sort() - JavaScript | MDN', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort', 7, 1, fav('M', '#1b1b1b')],
+    9: ['Kanban board — Sprint 42', 'https://board.example.com/sprint-42', 7, 1, fav('K', '#007b83')],
+    14: ['Inbox — Mail', 'https://mail.example.com/inbox', 7, 1, fav('M', '#1a73e8')],
+  };
   // Сколько минут назад смотрели вкладку (по порядку storeRaw). Две «Jaeger UI»: левую только что открывали,
   // правую — давно, поэтому «Порядок» и «Активность» ставят их по-разному.
   const STORE_AGO_MIN = [9000, 8000, 4000, 3900, 3800, 3000, 2500, 180, 45, 20, 90, 5, 1, 300, 0];
@@ -53,7 +66,8 @@
     ['Jaeger UI', 'https://jaeger.example.com/trace/4f2a9c0b11d3', 7],
     ['Jaeger UI', 'https://jaeger.example.com/search?service=dsp-enricher&limit=20&lookback=1h&operation=all&traceID=9e1d77aa02', 7],
   ];
-  let tabs = store ? storeRaw.map(([title, url, groupId, windowId, favIconUrl, pinned = false], i, all) => ({
+  const storeData = lang === 'en' ? storeRaw.map((row, i) => STORE_EN_OVERRIDES[i] || row) : storeRaw;
+  let tabs = store ? storeData.map(([title, url, groupId, windowId, favIconUrl, pinned = false], i, all) => ({
     id: i + 1, index: i, windowId, title, url, favIconUrl, pinned, groupId, active: i === all.length - 1,
     lastAccessed: STORE_NOW - STORE_AGO_MIN[i] * 60000,
   })) : raw.map(([title, url, groupId, windowId = 1], i) => ({
@@ -63,7 +77,7 @@
     ...(yandex ? { spaceId: windowId === 2 ? 2001 : groupId === 7 ? 1001 : 1002 } : {}), lastAccessed: 1000 + ((i * 37) % 11),
   }));
   const groups = store
-    ? { 7: { id: 7, title: 'Работа', color: 'blue' }, 8: { id: 8, title: 'Путешествие', color: 'green' }, 9: { id: 9, title: 'Учёба', color: 'purple' } }
+    ? { 7: { id: 7, title: lang === 'en' ? 'Work' : 'Работа', color: 'blue' }, 8: { id: 8, title: lang === 'en' ? 'Travel' : 'Путешествие', color: 'green' }, 9: { id: 9, title: lang === 'en' ? 'Study' : 'Учёба', color: 'purple' } }
     : { 7: { id: 7, title: 'Работа', color: 'blue' }, 8: { id: 8, title: 'Мониторинг', color: 'green' } };
   const log = (...a) => console.log('[mock chrome]', ...a);
 
@@ -109,5 +123,32 @@
       async query() { return yandex ? [] : Object.values(groups); },
     };
   }
+  // chrome.i18n как в браузере: язык из ?lang= (по умолчанию ru), недостающие тексты берутся из default_locale (en).
+  const loadMessages = (l) => {
+    try {
+      const x = new XMLHttpRequest();
+      x.open('GET', '../extension/_locales/' + l + '/messages.json', false);
+      x.send();
+      return x.status === 200 ? JSON.parse(x.responseText) : {};
+    } catch {
+      return {};
+    }
+  };
+  const catalogs = [loadMessages(lang), loadMessages('en')];
+  window.chrome.i18n = {
+    getUILanguage: () => lang,
+    getMessage(name, subs) {
+      const entry = catalogs[0][name] || catalogs[1][name];
+      if (!entry) return '';
+      const args = subs == null ? [] : [].concat(subs);
+      let text = entry.message;
+      for (const [ph, def] of Object.entries(entry.placeholders || {})) {
+        const n = Number(String(def.content).replace('$', ''));
+        text = text.replace(new RegExp('\\$' + ph + '\\$', 'gi'), args[n - 1] ?? '');
+      }
+      return text.replace(/\$\$/g, '$');
+    },
+  };
+  document.documentElement.lang = lang;
   window.close = () => log('window.close');
 })();

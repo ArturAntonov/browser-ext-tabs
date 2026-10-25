@@ -1,0 +1,241 @@
+{
+  "extName": {
+    "message": "Поиск по вкладкам",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Быстрый поиск по открытым вкладкам: сначала текущая группа, при поиске — все группы и окна.",
+    "description": "Short description (max 132 chars)"
+  },
+  "cmdOpen": {
+    "message": "Открыть поиск по вкладкам",
+    "description": "Keyboard shortcut description"
+  },
+  "searchPlaceholder": {
+    "message": "Заголовок, сайт или адрес…",
+    "description": "Search field placeholder"
+  },
+  "sortLabel": {
+    "message": "Сортировка",
+    "description": "Accessibility label of the sort switch"
+  },
+  "sortOrder": {
+    "message": "Порядок",
+    "description": "Sort by tab position"
+  },
+  "sortOrderHint": {
+    "message": "Как вкладки стоят в браузере: справа налево, новые сверху",
+    "description": "Tooltip"
+  },
+  "sortActivity": {
+    "message": "Активность",
+    "description": "Sort by last viewed time"
+  },
+  "sortActivityHint": {
+    "message": "Сначала те, что недавно просматривали",
+    "description": "Tooltip"
+  },
+  "diagnostics": {
+    "message": "Диагностика",
+    "description": "Link that copies a technical report"
+  },
+  "diagnosticsHint": {
+    "message": "Скопировать в буфер, что браузер отдаёт расширению о вкладках и группах",
+    "description": "Tooltip"
+  },
+  "diagCopied": {
+    "message": "Скопировано",
+    "description": "Diagnostics button after success"
+  },
+  "diagFailed": {
+    "message": "Не удалось скопировать",
+    "description": "Diagnostics button after failure"
+  },
+  "tabsCount_one": {
+    "message": "$COUNT$ вкладка",
+    "description": "Plural form: one",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "tabsCount_few": {
+    "message": "$COUNT$ вкладки",
+    "description": "Plural form: few",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "tabsCount_many": {
+    "message": "$COUNT$ вкладок",
+    "description": "Plural form: many",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "tabsCount_other": {
+    "message": "$COUNT$ вкладки",
+    "description": "Plural form: other",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "groupUntitled": {
+    "message": "без названия",
+    "description": "Tab group without a title"
+  },
+  "chipCurrentGroup": {
+    "message": "Текущая группа · $TABS$",
+    "description": "TABS is e.g. \"56 tabs\"",
+    "placeholders": {
+      "tabs": {
+        "content": "$1"
+      }
+    }
+  },
+  "chipGroup": {
+    "message": "Группа «$NAME$»",
+    "description": "Chip with the group name",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "chipCurrentWindow": {
+    "message": "Текущее окно",
+    "description": "Chip when there is no group"
+  },
+  "hintMoreGroups": {
+    "message": "ещё групп: $COUNT$",
+    "description": "Next to the chip",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "reasonNoApi": {
+    "message": "API групп недоступно",
+    "description": "Why the window scope is used"
+  },
+  "reasonHidden": {
+    "message": "группы браузера расширению не видны",
+    "description": "Why the window scope is used"
+  },
+  "reasonNoGroup": {
+    "message": "вкладка вне группы",
+    "description": "Why the window scope is used"
+  },
+  "badgeSpace": {
+    "message": "группа: $LABEL$",
+    "description": "Label of a tab in another Yandex group",
+    "placeholders": {
+      "label": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeSpaceHint": {
+    "message": "Яндекс не отдаёт расширениям названия групп — показаны главные сайты группы и число вкладок",
+    "description": "Tooltip"
+  },
+  "badgeGroup": {
+    "message": "группа «$NAME$»",
+    "description": "Label of a tab in another group",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeOtherWindow": {
+    "message": "другое окно",
+    "description": "Label"
+  },
+  "badgeNoGroup": {
+    "message": "вне группы",
+    "description": "Label"
+  },
+  "spaceOther": {
+    "message": "другая группа",
+    "description": "Fallback label for a Yandex group"
+  },
+  "spaceNoSites": {
+    "message": "без сайтов",
+    "description": "Group without any recognised site"
+  },
+  "nowPill": {
+    "message": "текущая",
+    "description": "Badge on the tab the search was opened from"
+  },
+  "closeTab": {
+    "message": "Закрыть вкладку",
+    "description": "Tooltip of the × button"
+  },
+  "sectionCurrentGroup": {
+    "message": "В текущей группе",
+    "description": "Results section"
+  },
+  "sectionCurrentWindow": {
+    "message": "В текущем окне",
+    "description": "Results section"
+  },
+  "sectionOthers": {
+    "message": "В других группах и окнах",
+    "description": "Results section"
+  },
+  "emptyNotFound": {
+    "message": "Ничего не найдено",
+    "description": "Empty search results"
+  },
+  "emptyNoTabs": {
+    "message": "Нет вкладок",
+    "description": "Empty list"
+  },
+  "footerBase": {
+    "message": "$COUNT$ · ↑↓ выбрать · Enter перейти",
+    "description": "Footer with the number of rows",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "footerSearchAll": {
+    "message": " · поиск — по всем группам и окнам",
+    "description": "Appended to the footer while the query is empty"
+  },
+  "goBack": {
+    "message": "Вернуться: $TITLE$",
+    "description": "First row after leaving a tab via search",
+    "placeholders": {
+      "title": {
+        "content": "$1"
+      }
+    }
+  },
+  "consentText1": {
+    "message": "Расширение читает заголовки и адреса ваших открытых вкладок, чтобы показать их списком и искать по ним.",
+    "description": "First-run notice"
+  },
+  "consentText2": {
+    "message": "Всё происходит только внутри браузера: заголовки и адреса не сохраняются и никуда не отправляются.",
+    "description": "First-run notice"
+  },
+  "consentPrivacy": {
+    "message": "Политика конфиденциальности",
+    "description": "Link in the first-run notice"
+  },
+  "consentOk": {
+    "message": "Понятно",
+    "description": "Button in the first-run notice"
+  }
+}
